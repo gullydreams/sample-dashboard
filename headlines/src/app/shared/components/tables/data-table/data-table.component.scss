@@ -1,0 +1,58 @@
+/* src/app/shared/components/tables/data-table/data-table.component.scss */
+.data-table-container {
+    width: 100%;
+    overflow: auto;
+  }
+  
+  .table-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 8px 0;
+    color: var(--text-color);
+  }
+  
+  .table-wrapper {
+    overflow: auto;
+  }
+  
+  table {
+    width: 100%;
+  }
+  
+  .mat-column-actions {
+    width: 80px;
+    text-align: center;
+  }
+  
+  .clickable-row {
+    cursor: pointer;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+  
+  .empty-row {
+    padding: 16px;
+    text-align: center;
+  }
+  
+  .loading-message, .no-data-message {
+    color: var(--text-secondary);
+  }
+  
+  .cell-icon {
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  
+  .tooltip-icon {
+    font-size: 16px;
+    margin-left: 4px;
+    opacity: 0.6;
+    cursor: help;
+  }
+  
+  th.mat-header-cell {
+    font-weight: 500;
+  }

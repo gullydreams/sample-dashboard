@@ -1,10 +1,13 @@
 /* src/app/shared/components/cards/metric-card/metric-card.component.scss */
 .metric-card {
-    background-color: var(--card-background);
+    background-color: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     padding: 16px;
-    border-top: 4px solid transparent;
+    border-top: 3px solid transparent;
+    height: 100%; /* Fill the parent container */
+    display: flex;
+    flex-direction: column;
     
     &.clickable {
       cursor: pointer;
@@ -21,7 +24,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
   }
   
   .metric-title {
@@ -38,7 +41,8 @@
   }
   
   .metric-footer {
-    margin-top: 8px;
+    margin-top: auto; /* Push to bottom without absolute positioning */
+    padding-top: 8px;
   }
   
   .trend {

@@ -1,62 +1,84 @@
 <!-- src/app/features/dashboard/test-case/test-case-dashboard/test-case-dashboard.component.html -->
 <div class="dashboard-container">
-    <!-- Summary metrics -->
-    <div class="summary-bar">
-      <app-metric-card 
-        title="Test cases completed" 
-        [value]="summaryData.total || 0" 
-        icon="check_circle"
-        color="var(--primary-color)">
-      </app-metric-card>
-      
-      <app-metric-card 
-        title="Total execution time" 
-        [value]="summaryData.totalExecutionTime || '0s'" 
-        icon="timer" 
-        color="var(--primary-color)">
-      </app-metric-card>
-      
-      <app-metric-card 
-        title="Passed" 
-        [value]="summaryData.passed || 0" 
-        icon="done"
-        color="var(--success-color)">
-      </app-metric-card>
-      
-      <app-metric-card 
-        title="Failed" 
-        [value]="summaryData.failed || 0" 
-        icon="error"
-        color="var(--failure-color)">
-      </app-metric-card>
-      
-      <app-metric-card 
-        title="Error" 
-        [value]="summaryData.error || 0" 
-        icon="warning"
-        color="var(--error-color)">
-      </app-metric-card>
-      
-      <app-metric-card 
-        title="Cancelled" 
-        [value]="summaryData.cancelled || 0" 
-        icon="cancel"
-        color="#9E9E9E">
-      </app-metric-card>
-      
-      <app-metric-card 
-        title="In progress" 
-        [value]="summaryData.inProgress || 0" 
-        icon="hourglass_empty"
-        color="#2196F3">
-      </app-metric-card>
-    </div>
-  
-    <!-- Charts -->
-    <div class="dashboard-grid">
-      <!-- Test case runs per day -->
-      <div class="grid-item grid-item--large">
+  <!-- Use our new custom filter bar component -->
+  <app-filter-bar
+    [selectedDateRange]="'Last 7 days'"
+    [selectedModel]="''"
+    [selectedSuite]="''">
+  </app-filter-bar>
+
+  <!-- Summary metrics -->
+  <div class="summary-bar"> 
+    <app-metric-card 
+      title="Test cases completed" 
+      [value]="summaryData.total || 0" 
+      icon="check_circle"
+      color="var(--primary-color)">
+    </app-metric-card>
+    
+    <app-metric-card 
+      title="Total execution time" 
+      [value]="summaryData.totalExecutionTime || '0s'" 
+      icon="timer" 
+      color="var(--primary-color)">
+    </app-metric-card>
+    
+    <app-metric-card 
+      title="Passed" 
+      [value]="summaryData.passed || 0" 
+      [trend]="'up'"
+      [trendValue]="'65%'"
+      icon="done"
+      color="var(--success-color)">
+    </app-metric-card>
+    
+    <app-metric-card 
+      title="Failed" 
+      [value]="summaryData.failed || 0" 
+      [trend]="'down'"
+      [trendValue]="'8%'"
+      icon="error"
+      color="var(--failure-color)">
+    </app-metric-card>
+    
+    <app-metric-card 
+      title="Error" 
+      [value]="summaryData.error || 0" 
+      [trend]="'neutral'"
+      [trendValue]="'12%'"
+      icon="warning"
+      color="var(--error-color)">
+    </app-metric-card>
+    
+    <app-metric-card 
+      title="Cancelled" 
+      [value]="summaryData.cancelled || 0" 
+      [trend]="'neutral'"
+      [trendValue]="'15%'"
+      icon="cancel"
+      color="#9E9E9E">
+    </app-metric-card>
+    
+    <app-metric-card 
+      title="In progress" 
+      [value]="summaryData.inProgress || 0" 
+      icon="hourglass_empty"
+      color="#2196F3">
+    </app-metric-card>
+  </div>
+
+  <!-- Chart sections -->
+  <div class="charts-row">
+    <!-- Test case runs per day -->
+    <div class="chart-section runs-per-day">
+      <div class="section-header">
         <h2>Test case runs per day</h2>
+        <div class="view-all-button">
+          <span>View all</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </div>
+      <div class="section-content">
         <app-line-chart 
           *ngIf="dailyResultsDatasets.length > 0"
           [datasets]="dailyResultsDatasets"
@@ -65,10 +87,18 @@
         </app-line-chart>
         <div *ngIf="isLoading" class="loading-placeholder">Loading...</div>
       </div>
-      
-      <!-- Test case results by status -->
-      <div class="grid-item">
+    </div>
+    
+    <!-- Test case results by status -->
+    <div class="chart-section results-by-status">
+      <div class="section-header">
         <h2>Test case results by status</h2>
+        <div class="view-all-button">
+          <span>View all</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </div>
+      <div class="section-content">
         <app-donut-chart
           *ngIf="statusChartData.length > 0"
           [data]="statusChartData"
@@ -77,7 +107,66 @@
         </app-donut-chart>
         <div *ngIf="isLoading" class="loading-placeholder">Loading...</div>
       </div>
-  
-      <!-- We'll add more components in future iterations -->
     </div>
   </div>
+  
+  <!-- Table sections -->
+  <div class="table-sections">
+    <!-- Top 10 longest running test cases -->
+    <div class="section table-section longest-running">
+      <div class="section-header">
+        <h2>Top 10 longest running test cases</h2>
+        <div class="view-all-button">
+          <span>View all</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </div>
+      <div class="section-content">
+        <app-data-table
+          [data]="longestRunningTestCases"
+          [columns]="longestRunningColumns"
+          [loading]="tablesLoading.longest"
+          (rowClick)="onTestCaseClick($event)">
+        </app-data-table>
+      </div>
+    </div>
+    
+    <!-- Top 10 test case failures -->
+    <div class="section table-section failures">
+      <div class="section-header">
+        <h2>Top 10 test case failures</h2>
+        <div class="view-all-button">
+          <span>View all</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </div>
+      <div class="section-content">
+        <app-data-table
+          [data]="topTestCaseFailures"
+          [columns]="failuresColumns"
+          [loading]="tablesLoading.failures"
+          (rowClick)="onTestCaseClick($event)">
+        </app-data-table>
+      </div>
+    </div>
+    
+    <!-- Top 10 test case errors -->
+    <div class="section table-section errors">
+      <div class="section-header">
+        <h2>Top 10 test case errors</h2>
+        <div class="view-all-button">
+          <span>View all</span>
+          <mat-icon>arrow_forward</mat-icon>
+        </div>
+      </div>
+      <div class="section-content">
+        <app-data-table
+          [data]="topTestCaseErrors"
+          [columns]="errorsColumns"
+          [loading]="tablesLoading.errors"
+          (rowClick)="onTestCaseClick($event)">
+        </app-data-table>
+      </div>
+    </div>
+  </div>
+</div>

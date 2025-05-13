@@ -31,8 +31,12 @@ export class DonutChartComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     // Update chart when inputs change
-    if ((changes['data'] || changes['labels'] || changes['colors']) && this.chartCanvas) {
-      this.initChart();
+    if ((changes['data'] || changes['labels'] || changes['colors'])) {
+      console.log('DonutChart data changed:', this.data, this.labels);
+      // Add a small delay to ensure the view is ready
+      setTimeout(() => {
+        this.initChart();
+      }, 500);
     }
   }
 

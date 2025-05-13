@@ -1,30 +1,46 @@
 // src/app/shared/shared.module.ts
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table'; 
+import { MatSortModule } from '@angular/material/sort';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonModule } from '@angular/material/button';
+
 import { MetricCardComponent } from './components/cards/metric-card/metric-card.component';
 import { DonutChartComponent } from './components/charts/donut-chart/donut-chart.component';
 import { LineChartComponent } from './components/charts/line-chart/line-chart.component';
-import { MatIconModule } from '@angular/material/icon';
+import { DataTableComponent } from './components/tables/data-table/data-table.component';
 
 @NgModule({
-  declarations: [
-    // If these components are standalone, don't declare them
-    // If these components are non-standalone, declare them
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     MatIconModule,
-    // If these components are standalone, import them
-    MetricCardComponent,
-    DonutChartComponent,
-    LineChartComponent
-  ],
-  exports: [
-    // Export components so they can be used in other modules
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+    MatButtonModule,
+    // Standalone components
     MetricCardComponent,
     DonutChartComponent,
     LineChartComponent,
-    MatIconModule
+    DataTableComponent
+  ],
+  exports: [
+    MatIconModule,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatTooltipModule,
+    MatButtonModule,
+    // Standalone components
+    MetricCardComponent,
+    DonutChartComponent,
+    LineChartComponent,
+    DataTableComponent
   ]
 })
 export class SharedModule { }

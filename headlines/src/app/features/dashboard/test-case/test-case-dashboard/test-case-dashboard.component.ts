@@ -5,11 +5,22 @@ import { TestDataService } from '../../../../core/services/test-data.service';
 import { MetricCardComponent } from '../../../../shared/components/cards/metric-card/metric-card.component';
 import { DonutChartComponent } from '../../../../shared/components/charts/donut-chart/donut-chart.component';
 import { LineChartComponent } from '../../../../shared/components/charts/line-chart/line-chart.component';
+import { DataTableComponent } from '../../../../shared/components/tables/data-table/data-table.component';
+import { FilterBarComponent } from '../../../../shared/components/filters/filter-bar/filter-bar.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-test-case-dashboard',
   standalone: true,
-  imports: [CommonModule, MetricCardComponent, DonutChartComponent, LineChartComponent],
+  imports: [
+    CommonModule, 
+    MatIconModule,
+    MetricCardComponent, 
+    DonutChartComponent, 
+    LineChartComponent,
+    DataTableComponent,
+    FilterBarComponent
+  ],
   templateUrl: './test-case-dashboard.component.html',
   styleUrls: ['./test-case-dashboard.component.scss']
 })
@@ -26,8 +37,61 @@ export class TestCaseDashboardComponent implements OnInit {
   dailyResultsLabels: string[] = [];
   dailyResultsDatasets: any[] = [];
   
+  // Table data
+  longestRunningTestCases: any[] = [];
+  topTestCaseFailures: any[] = [];
+  topTestCaseErrors: any[] = [];
+  
+  // Column definitions for tables
+  longestRunningColumns = [
+    { property: 'id', name: 'ID' },
+    { property: 'name', name: 'Test Case' },
+    { 
+      property: 'executionTime', 
+      name: 'Avg. Time', 
+      sortable: true,
+      formatter: (value: number) => `${value} s`
+    },
+    { 
+      property: 'executionTime', 
+      name: 'Max. Time', 
+      sortable: true,
+      formatter: (value: number) => `${value * 1.2} s` // This is just for the mock, in real data you'd have a separate max value
+    },
+    { property: 'model', name: 'Model/Suite' }
+  ];
+  
+  failuresColumns = [
+    { property: 'id', name: 'ID' },
+    { property: 'name', name: 'Test Case' },
+    { 
+      property: 'failures', 
+      name: 'Total Failures', 
+      sortable: true,
+      cellClass: 'error-cell'
+    },
+    { property: 'model', name: 'Model/Suite' }
+  ];
+  
+  errorsColumns = [
+    { property: 'id', name: 'ID' },
+    { property: 'name', name: 'Test Case' },
+    { 
+      property: 'errors', 
+      name: 'Total Errors', 
+      sortable: true,
+      cellClass: 'warning-cell'
+    },
+    { property: 'model', name: 'Model/Suite' }
+  ];
+  
   // Loading states
   isLoading = true;
+  tablesLoading = {
+    longest: true,
+    failures: true,
+    errors: true
+  };
 
   constructor(private testDataService: TestDataService) {}
 
@@ -38,6 +102,7 @@ export class TestCaseDashboardComponent implements OnInit {
   private loadDashboardData(): void {
     // Get summary data
     this.testDataService.getTestResultsSummary().subscribe(summary => {
+      console.log('Summary data received:', summary);
       this.summaryData = summary;
       this.prepareStatusChartData();
       this.isLoading = false;
@@ -45,7 +110,29 @@ export class TestCaseDashboardComponent implements OnInit {
     
     // Get daily results data
     this.testDataService.getDailyTestResults().subscribe(dailyResults => {
+      console.log('Daily results received:', dailyResults);
       this.prepareDailyResultsChartData(dailyResults);
+    });
+    
+    // Get longest running test cases
+    this.testDataService.getLongestRunningTestCases().subscribe(testCases => {
+      console.log('Longest running test cases:', testCases);
+      this.longestRunningTestCases = testCases;
+      this.tablesLoading.longest = false;
+    });
+    
+    // Get top test case failures
+    this.testDataService.getTopTestCaseFailures().subscribe(failures => {
+      console.log('Top test case failures:', failures);
+      this.topTestCaseFailures = failures;
+      this.tablesLoading.failures = false;
+    });
+    
+    // Get top test case errors
+    this.testDataService.getTopTestCaseErrors().subscribe(errors => {
+      console.log('Top test case errors:', errors);
+      this.topTestCaseErrors = errors;
+      this.tablesLoading.errors = false;
     });
   }
 
@@ -102,5 +189,15 @@ export class TestCaseDashboardComponent implements OnInit {
         tension: 0.4
       }
     ];
+  }
+  
+  onTestCaseClick(testCase: any): void {
+    console.log('Test case clicked:', testCase);
+    // In a real app, this would navigate to test case details
+  }
+  
+  onViewAllClick(section: string): void {
+    console.log(`View all clicked for section: ${section}`);
+    // In a real app, this would navigate to a detailed view
   }
 }
