@@ -1,9 +1,13 @@
 <div class="dashboard-container">
     <!-- Use our custom filter bar component -->
-    <app-filter-bar
-      [selectedDateRange]="'Last 7 days'"
-      [selectedModel]="selectedModel?.name || ''">
-    </app-filter-bar>
+  <app-filter-bar
+    [selectedDateRange]="'Last 7 days'"
+    [selectedModelName]="selectedModel?.name || ''"
+    [selectedSuiteName]="''"
+    [models]="[selectedModel]"
+    [suites]="[]"
+    [isRefreshing]="isLoading">
+  </app-filter-bar>
     
     <!-- Main dashboard content -->
     <div class="dashboard-grid">
@@ -173,4 +177,4 @@
         <div class="loading-placeholder" *ngIf="sectionsLoading.testResults">Loading...</div>
       </div>
     </div>
-  </div>
+  </div> 

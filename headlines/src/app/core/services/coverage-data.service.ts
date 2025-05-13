@@ -1,15 +1,25 @@
+// src/app/core/services/coverage-data.service.ts
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { delay, tap, catchError } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CoverageDataService {
+  private cache: Map<string, any> = new Map();
+  private lastRefresh: Date = new Date();
 
   constructor() { }
 
-  getModelCoverage(modelId: string): Observable<any> {
+  getModelCoverage(modelId: string, forceRefresh: boolean = false): Observable<any> {
+    const cacheKey = `model-coverage-${modelId}`;
+    
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+    
     // Mock data for coverage information
     const mockCoverage = {
       modelInfo: {
@@ -50,10 +60,23 @@ export class CoverageDataService {
       }
     };
     
-    return of(mockCoverage).pipe(delay(600));
+    return of(mockCoverage).pipe(
+      delay(600),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(this.handleError)
+    );
   }
   
-  getBugHuntingHistory(modelId: string): Observable<any[]> {
+  getBugHuntingHistory(modelId: string, forceRefresh: boolean = false): Observable<any[]> {
+    const cacheKey = `bug-hunting-history-${modelId}`;
+    
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+    
     // Mock data for bug hunting history
     const mockBugHunting = [
       {
@@ -65,6 +88,38 @@ export class CoverageDataService {
       }
     ];
     
-    return of(mockBugHunting).pipe(delay(500));
+    return of(mockBugHunting).pipe(
+      delay(500),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(this.handleError)
+    );
+  }
+  
+  clearCache(): void {
+    this.cache.clear();
+    this.lastRefresh = new Date();
+  }
+  
+  getLastRefreshTime(): Date {
+    return this.lastRefresh;
+  }
+  
+  private handleError(error: HttpErrorResponse) {
+    console.error('An error occurred:', error);
+    
+    let errorMessage = 'An error occurred while loading data.';
+    
+    if (error instanceof Error) {
+      // Client-side error
+      errorMessage = `Error: ${error.message}`;
+    } else {
+      // Server-side error if HttpErrorResponse
+      errorMessage = `Error: ${error.message || 'Unknown error'}`;
+    }
+    
+    return throwError(() => new Error(errorMessage));
   }
 }

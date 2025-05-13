@@ -1,9 +1,9 @@
 /* Import global styles */
-@import './styles/variables';
-@import './styles/grid-layouts';
-@import './styles/flex-layouts';
-@import './styles/responsive';
-@import './styles/charts';
+@use './styles/variables';
+@use './styles/grid-layouts';
+@use './styles/flex-layouts';
+@use './styles/responsive';
+@use './styles/charts';
 
 /* Base styles */
 html, body { height: 100%; }

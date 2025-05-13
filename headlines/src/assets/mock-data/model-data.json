@@ -1,20 +1,20 @@
 {
-    "models": [
-      {
-        "id": "model-001",
-        "name": "Shopping Cart",
-        "automatedStates": 3,
-        "totalStates": 8,
-        "automatedActions": 7,
-        "totalActions": 8
-      },
-      {
-        "id": "model-002",
-        "name": "Login",
-        "automatedStates": 5,
-        "totalStates": 6,
-        "automatedActions": 12,
-        "totalActions": 15
-      }
-    ]
-  }
+  "models": [
+    {
+      "id": "model-001",
+      "name": "Shopping Cart",
+      "automatedStates": 3,
+      "totalStates": 8,
+      "automatedActions": 7,
+      "totalActions": 8
+    },
+    {
+      "id": "model-002",
+      "name": "Login",
+      "automatedStates": 5,
+      "totalStates": 6,
+      "automatedActions": 12,
+      "totalActions": 15
+    }
+  ]
+}

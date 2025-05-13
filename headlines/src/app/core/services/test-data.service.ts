@@ -1,43 +1,128 @@
+// src/app/core/services/test-data.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { delay, map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, of, throwError } from 'rxjs';
+import { delay, map, catchError, tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TestDataService {
-  constructor(private http: HttpClient) {}
+  private cache: Map<string, any> = new Map();
+  private lastRefresh: Date = new Date();
 
-  getTestCaseResults(filters?: any): Observable<any> {
+  constructor(private http: HttpClient) { }
+
+  getTestCaseResults(filters?: any, forceRefresh: boolean = false): Observable<any> {
+    const cacheKey = `test-cases-${JSON.stringify(filters || {})}`;
+
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
     return this.http.get<any>('assets/mock-data/test-cases.json').pipe(
       delay(500), // Simulate network delay
-      map(data => this.applyFilters(data, filters))
+      map(data => this.applyFilters(data, filters)),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(this.handleError)
     );
   }
 
-  getTestResultsSummary(filters?: any): Observable<any> {
+  getTestResultsSummary(filters?: any, forceRefresh: boolean = false): Observable<any> {
+    const cacheKey = `test-results-summary-${JSON.stringify(filters || {})}`;
+
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
+    // Fallback data in case the HTTP request fails
+    const fallbackData = {
+      total: 1000,
+      passed: 650,
+      failed: 80,
+      error: 120,
+      cancelled: 150,
+      inProgress: 16,
+      totalExecutionTime: "6d 3h 12m 3s"
+    };
+
     return this.http.get<any>('assets/mock-data/test-results.json').pipe(
       delay(500),
-      map(data => data.summary)
+      map(data => data.summary),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(error => {
+        console.error('Error loading test results summary:', error);
+        return of(fallbackData);
+      })
     );
   }
 
-  getDailyTestResults(filters?: any): Observable<any> {
+  getDailyTestResults(filters?: any, forceRefresh: boolean = false): Observable<any> {
+    const cacheKey = `daily-test-results-${JSON.stringify(filters || {})}`;
+
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
+    // Fallback data in case the HTTP request fails
+    const fallbackData = [
+      {
+        date: "2025-05-10",
+        passed: 92,
+        failed: 12,
+        error: 5,
+        cancelled: 2
+      },
+      {
+        date: "2025-05-11",
+        passed: 85,
+        failed: 15,
+        error: 7,
+        cancelled: 4
+      },
+      {
+        date: "2025-05-12",
+        passed: 95,
+        failed: 10,
+        error: 3,
+        cancelled: 1
+      }
+    ];
+
     return this.http.get<any>('assets/mock-data/test-results.json').pipe(
       delay(500),
-      map(data => data.dailyResults)
+      map(data => data.dailyResults),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(error => {
+        console.error('Error loading daily test results:', error);
+        return of(fallbackData);
+      })
     );
   }
 
-  private applyFilters(data: any, filters?: any): any {
-    if (!filters) return data;
-    
-    // Apply filtering logic - simplified for demo
-    return data;
-  }
+  getLongestRunningTestCases(limit: number = 10, forceRefresh: boolean = false): Observable<any[]> {
+    const cacheKey = `longest-running-test-cases-${limit}`;
 
-  getLongestRunningTestCases(limit: number = 10): Observable<any[]> {
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
+    // Fallback data in case the HTTP request fails
+    const fallbackData = [
+      { id: 'TC-003', name: 'Check if data is committed to the database', executionTime: 420, maxExecutionTime: 504, model: 'Shopping Cart' },
+      { id: 'TC-002', name: 'Login using invalid password', executionTime: 86, maxExecutionTime: 103.2, model: 'Login' },
+      { id: 'TC-001', name: 'Login using valid credentials', executionTime: 20, maxExecutionTime: 24, model: 'Shopping Cart' }
+    ];
+
     return this.http.get<any>('assets/mock-data/test-cases.json').pipe(
       delay(500),
       map(data => {
@@ -45,12 +130,31 @@ export class TestDataService {
         // Sort by execution time in descending order
         return testCases
           .sort((a: any, b: any) => b.executionTime - a.executionTime)
-          .slice(0, limit);
+          .slice(0, limit)
+          .map((testCase: any) => ({
+            ...testCase,
+            // Add maxExecutionTime property
+            maxExecutionTime: testCase.executionTime * 1.2
+          }));
+      }),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(error => {
+        console.error('Error loading longest running test cases:', error);
+        return of(fallbackData);
       })
     );
   }
 
-  getTopTestCaseFailures(limit: number = 10): Observable<any[]> {
+  getTopTestCaseFailures(limit: number = 10, forceRefresh: boolean = false): Observable<any[]> {
+    const cacheKey = `top-test-case-failures-${limit}`;
+
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
     return this.http.get<any>('assets/mock-data/test-cases.json').pipe(
       delay(500),
       map(data => {
@@ -67,16 +171,27 @@ export class TestDataService {
           // Include the failures from our original testCases
           ...testCases.filter((tc: any) => tc.failures > 0)
         ];
-        
+
         // Sort by failures in descending order
         return mockFailures
           .sort((a: any, b: any) => b.failures - a.failures)
           .slice(0, limit);
-      })
+      }),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(this.handleError)
     );
   }
 
-  getTopTestCaseErrors(limit: number = 10): Observable<any[]> {
+  getTopTestCaseErrors(limit: number = 10, forceRefresh: boolean = false): Observable<any[]> {
+    const cacheKey = `top-test-case-errors-${limit}`;
+
+    if (!forceRefresh && this.cache.has(cacheKey)) {
+      return of(this.cache.get(cacheKey));
+    }
+
     // For this mock, we'll simulate errors as a separate type of issue
     const mockErrors = [
       { id: 'TC-011', name: 'Database connection test', errors: 75, model: 'Database' },
@@ -90,7 +205,46 @@ export class TestDataService {
       { id: 'TC-019', name: 'User profile update', errors: 18, model: 'Profile' },
       { id: 'TC-020', name: 'Product review submission', errors: 12, model: 'Reviews' }
     ];
-    
-    return of(mockErrors).pipe(delay(500));
+
+    return of(mockErrors).pipe(
+      delay(500),
+      tap(data => {
+        this.cache.set(cacheKey, data);
+        this.lastRefresh = new Date();
+      }),
+      catchError(this.handleError)
+    );
   }
-} 
+
+  clearCache(): void {
+    this.cache.clear();
+    this.lastRefresh = new Date();
+  }
+
+  getLastRefreshTime(): Date {
+    return this.lastRefresh;
+  }
+
+  private applyFilters(data: any, filters?: any): any {
+    if (!filters) return data;
+
+    // Apply filtering logic - simplified for demo
+    return data;
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('An error occurred:', error);
+
+    let errorMessage = 'An error occurred while loading data.';
+
+    if (error.error instanceof ErrorEvent) {
+      // Client-side error
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+
+    return throwError(() => new Error(errorMessage));
+  }
+}

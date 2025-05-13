@@ -1,14 +1,37 @@
 <!-- src/app/features/dashboard/test-case/test-case-dashboard/test-case-dashboard.component.html -->
 <div class="dashboard-container">
-  <!-- Use our new custom filter bar component -->
+  <!-- Error Banner -->
+  <div class="error-banner" *ngIf="hasError">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage }}</span>
+    <button class="retry-button" (click)="loadDashboardData(true)">Retry</button>
+  </div>
+
+  <!-- Use our enhanced filter bar component -->
   <app-filter-bar
-    [selectedDateRange]="'Last 7 days'"
-    [selectedModel]="''"
-    [selectedSuite]="''">
+    [selectedDateRange]="selectedDateRange"
+    [selectedModelName]="selectedModel?.name || ''"
+    [selectedSuiteName]="selectedSuite?.name || ''"
+    [models]="availableModels"
+    [suites]="availableSuites"
+    [isRefreshing]="isRefreshing"
+    (dateRangeChanged)="onDateRangeChanged($event)"
+    (modelChanged)="onModelChanged($event)"
+    (suiteChanged)="onSuiteChanged($event)"
+    (refreshClicked)="onRefreshClicked()"
+    (helpClicked)="onHelpClicked()">
   </app-filter-bar>
 
+  <!-- Loading Indicator -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <mat-icon class="rotating">refresh</mat-icon>
+      <span>Loading dashboard data...</span>
+    </div>
+  </div>
+
   <!-- Summary metrics -->
-  <div class="summary-bar"> 
+  <div class="summary-bar">
     <app-metric-card 
       title="Test cases completed" 
       [value]="summaryData.total || 0" 
@@ -73,7 +96,7 @@
     <div class="chart-section runs-per-day">
       <div class="section-header">
         <h2>Test case runs per day</h2>
-        <div class="view-all-button">
+        <div class="view-all-button" (click)="onViewAllClick('runs-per-day')">
           <span>View all</span>
           <mat-icon>arrow_forward</mat-icon>
         </div>
@@ -85,7 +108,10 @@
           [labels]="dailyResultsLabels"
           yAxisLabel="Number of runs">
         </app-line-chart>
-        <div *ngIf="isLoading" class="loading-placeholder">Loading...</div>
+        <div *ngIf="dailyResultsDatasets.length === 0 && !isLoading" class="no-data-message">
+          <mat-icon>info</mat-icon>
+          <p>No data available for the selected filters.</p>
+        </div>
       </div>
     </div>
     
@@ -93,7 +119,7 @@
     <div class="chart-section results-by-status">
       <div class="section-header">
         <h2>Test case results by status</h2>
-        <div class="view-all-button">
+        <div class="view-all-button" (click)="onViewAllClick('results-by-status')">
           <span>View all</span>
           <mat-icon>arrow_forward</mat-icon>
         </div>
@@ -105,7 +131,10 @@
           [labels]="statusChartLabels"
           [colors]="statusChartColors">
         </app-donut-chart>
-        <div *ngIf="isLoading" class="loading-placeholder">Loading...</div>
+        <div *ngIf="statusChartData.length === 0 && !isLoading" class="no-data-message">
+          <mat-icon>info</mat-icon>
+          <p>No data available for the selected filters.</p>
+        </div>
       </div>
     </div>
   </div>
@@ -116,7 +145,7 @@
     <div class="section table-section longest-running">
       <div class="section-header">
         <h2>Top 10 longest running test cases</h2>
-        <div class="view-all-button">
+        <div class="view-all-button" (click)="onViewAllClick('longest-running')">
           <span>View all</span>
           <mat-icon>arrow_forward</mat-icon>
         </div>
@@ -135,7 +164,7 @@
     <div class="section table-section failures">
       <div class="section-header">
         <h2>Top 10 test case failures</h2>
-        <div class="view-all-button">
+        <div class="view-all-button" (click)="onViewAllClick('failures')">
           <span>View all</span>
           <mat-icon>arrow_forward</mat-icon>
         </div>
@@ -154,7 +183,7 @@
     <div class="section table-section errors">
       <div class="section-header">
         <h2>Top 10 test case errors</h2>
-        <div class="view-all-button">
+        <div class="view-all-button" (click)="onViewAllClick('errors')">
           <span>View all</span>
           <mat-icon>arrow_forward</mat-icon>
         </div>

@@ -1,31 +1,31 @@
 {
-    "testCases": [
-      {
-        "id": "TC-001",
-        "name": "Login using valid credentials",
-        "status": "passed",
-        "executionTime": 20,
-        "lastRun": "2025-05-10T10:30:00",
-        "model": "Shopping Cart",
-        "failures": 0
-      },
-      {
-        "id": "TC-002",
-        "name": "Login using invalid password",
-        "status": "failed",
-        "executionTime": 86,
-        "lastRun": "2025-05-10T11:45:00",
-        "model": "Login",
-        "failures": 456
-      },
-      {
-        "id": "TC-003",
-        "name": "Check if data is committed to the database only when the operation is successful",
-        "status": "passed",
-        "executionTime": 420,
-        "lastRun": "2025-05-10T12:15:00",
-        "model": "Shopping Cart",
-        "failures": 0
-      }
-    ]
-  }
+  "testCases": [
+    {
+      "id": "TC-001",
+      "name": "Login using valid credentials",
+      "status": "passed",
+      "executionTime": 20,
+      "lastRun": "2025-05-10T10:30:00",
+      "model": "Shopping Cart",
+      "failures": 0
+    },
+    {
+      "id": "TC-002",
+      "name": "Login using invalid password",
+      "status": "failed",
+      "executionTime": 86,
+      "lastRun": "2025-05-10T11:45:00",
+      "model": "Login",
+      "failures": 456
+    },
+    {
+      "id": "TC-003",
+      "name": "Check if data is committed to the database only when the operation is successful",
+      "status": "passed",
+      "executionTime": 420,
+      "lastRun": "2025-05-10T12:15:00",
+      "model": "Shopping Cart",
+      "failures": 0
+    }
+  ]
+}

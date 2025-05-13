@@ -113,7 +113,7 @@
     }
     
     &:hover {
-      background-color: darken(#5F4B8B, 5%);
+     background-color: #513D79; /* Pre-computed darker shade of #5F4B8B */
     }
   }
   

@@ -76,7 +76,7 @@ export class DataTableComponent implements OnInit {
 
   getFormattedValue(row: any, column: any): string {
     if (column.formatter) {
-      return column.formatter(row[column.property]);
+      return column.formatter(row[column.property], row);
     }
     return row[column.property];
   }
