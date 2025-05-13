@@ -2,6 +2,7 @@
 import { Routes } from '@angular/router';
 import { TestCaseDashboardComponent } from './features/dashboard/test-case/test-case-dashboard/test-case-dashboard.component';
 import { ModelDashboardComponent } from './features/dashboard/model/model-dashboard/model-dashboard.component';
+import { ExploratoryDashboardComponent } from './features/dashboard/exploratory/exploratory-dashboard/exploratory-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,10 @@ export const routes: Routes = [
       {
         path: 'model',
         component: ModelDashboardComponent
+      },
+      {
+        path: 'exploratory',
+        component: ExploratoryDashboardComponent
       }
     ]
   },

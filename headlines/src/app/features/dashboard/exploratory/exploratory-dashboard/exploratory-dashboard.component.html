@@ -1,0 +1,176 @@
+<div class="dashboard-container">
+    <!-- Use our custom filter bar component -->
+    <app-filter-bar
+      [selectedDateRange]="'Last 7 days'"
+      [selectedModel]="selectedModel?.name || ''">
+    </app-filter-bar>
+    
+    <!-- Main dashboard content -->
+    <div class="dashboard-grid">
+      <!-- Model -->
+      <div class="dashboard-card model-card">
+        <div class="card-header">
+          <h2>Model</h2>
+          <button class="edit-button" mat-icon-button>
+            Edit
+          </button>
+        </div>
+        <div class="card-content" *ngIf="!sectionsLoading.model">
+          <div class="donut-chart-container">
+            <app-donut-chart
+              [data]="modelChartData"
+              [labels]="modelChartLabels"
+              [colors]="modelChartColors">
+            </app-donut-chart>
+          </div>
+          <div class="model-stats">
+            <table class="stats-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Automated</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>States</td>
+                  <td>{{ coverageData.modelInfo?.automatedStates || 0 }}</td>
+                  <td>{{ coverageData.modelInfo?.totalStates || 0 }}</td>
+                </tr>
+                <tr>
+                  <td>Actions</td>
+                  <td>{{ coverageData.modelInfo?.automatedActions || 0 }}</td>
+                  <td>{{ coverageData.modelInfo?.totalActions || 0 }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="loading-placeholder" *ngIf="sectionsLoading.model">Loading...</div>
+      </div>
+      
+      <!-- Bug Hunting -->
+      <div class="dashboard-card bug-hunting-card">
+        <div class="card-header">
+          <h2>Bug Hunting</h2>
+          <button class="view-button" mat-icon-button>
+            View
+          </button>
+        </div>
+        <div class="card-content" *ngIf="!sectionsLoading.bugHunting && coverageData.bugHunting?.failingActions?.length > 0">
+          <div class="bug-hunting-content">
+            <div class="bug-section">
+              <h3>Top {{ coverageData.bugHunting?.failingActions?.length }} Failing Actions</h3>
+              <div class="bug-list">
+                <div class="bug-item" *ngFor="let action of coverageData.bugHunting?.failingActions; let i = index">
+                  <div class="bug-rank">{{ i + 1 }}.</div>
+                  <div class="bug-name">{{ action.name }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bug-section" *ngIf="coverageData.bugHunting?.failingTags?.length > 0">
+              <h3>Top Failing Tags</h3>
+              <div class="bug-list">
+                <div class="bug-item" *ngFor="let tag of coverageData.bugHunting?.failingTags; let i = index">
+                  <div class="bug-rank">{{ i + 1 }}.</div>
+                  <div class="bug-name">{{ tag.name }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="good-message" *ngIf="!sectionsLoading.bugHunting && (!coverageData.bugHunting?.failingActions || coverageData.bugHunting?.failingActions.length === 0)">
+          <mat-icon>check_circle</mat-icon>
+          <p>No failures detected, all good!</p>
+        </div>
+        <div class="loading-placeholder" *ngIf="sectionsLoading.bugHunting">Loading...</div>
+      </div>
+      
+      <!-- Coverage -->
+      <div class="dashboard-card coverage-card">
+        <div class="card-header">
+          <h2>Coverage</h2>
+          <button class="view-button" mat-icon-button>
+            View
+          </button>
+        </div>
+        <div class="card-content" *ngIf="!sectionsLoading.coverage">
+          <div class="coverage-chart-container">
+            <app-bar-chart
+              [chartData]="coverageBarData"
+              [horizontal]="false">
+            </app-bar-chart>
+          </div>
+        </div>
+        <div class="loading-placeholder" *ngIf="sectionsLoading.coverage">Loading...</div>
+      </div>
+      
+      <!-- Test Cases -->
+      <div class="dashboard-card test-cases-card">
+        <div class="card-header">
+          <h2>Test Cases</h2>
+          <button class="view-button" mat-icon-button>
+            View
+          </button>
+        </div>
+        <div class="card-content" *ngIf="!sectionsLoading.testCases">
+          <div class="donut-chart-container">
+            <app-donut-chart
+              [data]="testCasesChartData"
+              [labels]="testCasesChartLabels"
+              [colors]="testCasesChartColors">
+            </app-donut-chart>
+          </div>
+          <div class="test-cases-stats">
+            <div class="stat-item">
+              <div class="stat-label">Test Cases Run:</div>
+              <div class="stat-value">{{ coverageData.testCases?.run || 0 }}</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-label">Total Hits:</div>
+              <div class="stat-value">{{ coverageData.testCases?.hits || 0 }}</div>
+            </div>
+          </div>
+        </div>
+        <div class="loading-placeholder" *ngIf="sectionsLoading.testCases">Loading...</div>
+      </div>
+      
+      <!-- Test Results -->
+      <div class="dashboard-card test-results-card">
+        <div class="card-header">
+          <h2>Test Results</h2>
+          <button class="view-button" mat-icon-button>
+            View
+          </button>
+        </div>
+        <div class="card-content" *ngIf="!sectionsLoading.testResults">
+          <div class="donut-chart-container">
+            <app-donut-chart
+              [data]="testResultsChartData"
+              [labels]="testResultsChartLabels"
+              [colors]="testResultsChartColors">
+            </app-donut-chart>
+          </div>
+          <div class="test-results-stats">
+            <div class="stats-row">
+              <div class="stat-item">
+                <div class="stat-label">Runs:</div>
+                <div class="stat-value">{{ coverageData.testResults?.runs || 0 }}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Duration:</div>
+                <div class="stat-value">{{ coverageData.testResults?.duration || '0h 0m' }}</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-label">Pass Rate:</div>
+                <div class="stat-value">{{ coverageData.testResults?.passRate || '0%' }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="loading-placeholder" *ngIf="sectionsLoading.testResults">Loading...</div>
+      </div>
+    </div>
+  </div>

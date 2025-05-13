@@ -12,7 +12,7 @@ import { Chart, ChartConfiguration, ChartType } from 'chart.js';
 export class BarChartComponent implements OnChanges {
   @ViewChild('chartCanvas') chartCanvas!: ElementRef;
   @Input() chartData: any;
-  @Input() xAxisLabel: string = 'Number of Runs';
+  @Input() xAxisLabel: string = '';
   @Input() yAxisLabel: string = '';
   @Input() horizontal: boolean = true;
 
@@ -36,7 +36,7 @@ export class BarChartComponent implements OnChanges {
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
 
     // Configure chart
-    const chartType: ChartType = this.horizontal ? 'bar' : 'bar';
+    const chartType: ChartType = 'bar';
 
     const config: ChartConfiguration = {
       type: chartType,
@@ -66,12 +66,18 @@ export class BarChartComponent implements OnChanges {
         },
         plugins: {
           legend: {
+            display: this.chartData.datasets.length > 1,
             position: 'top',
             align: 'start'
           },
           tooltip: {
             mode: 'index',
-            intersect: false
+            intersect: false,
+            callbacks: {
+              label: (context) => {
+                return `${context.dataset.label || ''}: ${context.parsed.y || context.parsed.x}%`;
+              }
+            }
           }
         }
       }
