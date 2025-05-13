@@ -179,9 +179,9 @@ headlines/
 
 ### Phase 1: Project Setup (10%) - Days 1-2
 
-- [ ]  Initialize Angular project
-- [ ]  Set up project structure
-- [ ]  Configure Angular Material theme
+- [x]  Initialize Angular project
+- [x]  Set up project structure
+- [x]  Configure Angular Material theme
 - [ ]  Create mock data JSON files
 - [ ]  Set up basic routing
 

@@ -1,4 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+/* Import global styles */
+@import './styles/variables';
+@import './styles/grid-layouts';
+@import './styles/flex-layouts';
+@import './styles/responsive';
+@import './styles/charts';
 
+/* Base styles */
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: var(--background-color); 
+}

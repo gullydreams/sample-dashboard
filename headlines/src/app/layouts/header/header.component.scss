@@ -1,0 +1,40 @@
+/* header.component.scss */
+.header-container {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    background-color: white;
+  }
+  
+  .header-title {
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--text-color);
+  }
+  
+  .spacer {
+    flex: 1 1 auto;
+  }
+  
+  .model-selector {
+    margin-right: 16px;
+    
+    select {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      margin-left: 8px;
+    }
+  }
+  
+  .help-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+  }

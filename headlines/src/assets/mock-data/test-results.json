@@ -1,0 +1,34 @@
+{
+    "summary": {
+      "total": 1000,
+      "passed": 650,
+      "failed": 80,
+      "error": 120,
+      "cancelled": 150,
+      "inProgress": 16,
+      "totalExecutionTime": "6d 3h 12m 3s"
+    },
+    "dailyResults": [
+      {
+        "date": "2025-05-10",
+        "passed": 92,
+        "failed": 12,
+        "error": 5,
+        "cancelled": 2
+      },
+      {
+        "date": "2025-05-11",
+        "passed": 85,
+        "failed": 15,
+        "error": 7,
+        "cancelled": 4
+      },
+      {
+        "date": "2025-05-12",
+        "passed": 95,
+        "failed": 10,
+        "error": 3,
+        "cancelled": 1
+      }
+    ]
+  }
