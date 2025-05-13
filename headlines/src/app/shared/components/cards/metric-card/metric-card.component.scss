@@ -1,0 +1,67 @@
+/* src/app/shared/components/cards/metric-card/metric-card.component.scss */
+.metric-card {
+    background-color: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    border-top: 4px solid transparent;
+    
+    &.clickable {
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+    }
+  }
+  
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .metric-title {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  
+  .metric-value {
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin: 8px 0;
+  }
+  
+  .metric-footer {
+    margin-top: 8px;
+  }
+  
+  .trend {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    
+    &.up {
+      color: var(--success-color);
+    }
+    
+    &.down {
+      color: var(--failure-color);
+    }
+    
+    &.neutral {
+      color: var(--text-secondary);
+    }
+    
+    mat-icon {
+      font-size: 16px;
+      height: 16px;
+      width: 16px;
+      margin-right: 4px;
+    }
+  }

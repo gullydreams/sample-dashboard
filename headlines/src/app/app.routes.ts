@@ -1,3 +1,4 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 import { TestCaseDashboardComponent } from './features/dashboard/test-case/test-case-dashboard/test-case-dashboard.component';
 

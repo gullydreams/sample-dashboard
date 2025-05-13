@@ -1,1 +1,83 @@
-<p>test-case-dashboard works!</p>
+<!-- src/app/features/dashboard/test-case/test-case-dashboard/test-case-dashboard.component.html -->
+<div class="dashboard-container">
+    <!-- Summary metrics -->
+    <div class="summary-bar">
+      <app-metric-card 
+        title="Test cases completed" 
+        [value]="summaryData.total || 0" 
+        icon="check_circle"
+        color="var(--primary-color)">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Total execution time" 
+        [value]="summaryData.totalExecutionTime || '0s'" 
+        icon="timer" 
+        color="var(--primary-color)">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Passed" 
+        [value]="summaryData.passed || 0" 
+        icon="done"
+        color="var(--success-color)">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Failed" 
+        [value]="summaryData.failed || 0" 
+        icon="error"
+        color="var(--failure-color)">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Error" 
+        [value]="summaryData.error || 0" 
+        icon="warning"
+        color="var(--error-color)">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="Cancelled" 
+        [value]="summaryData.cancelled || 0" 
+        icon="cancel"
+        color="#9E9E9E">
+      </app-metric-card>
+      
+      <app-metric-card 
+        title="In progress" 
+        [value]="summaryData.inProgress || 0" 
+        icon="hourglass_empty"
+        color="#2196F3">
+      </app-metric-card>
+    </div>
+  
+    <!-- Charts -->
+    <div class="dashboard-grid">
+      <!-- Test case runs per day -->
+      <div class="grid-item grid-item--large">
+        <h2>Test case runs per day</h2>
+        <app-line-chart 
+          *ngIf="dailyResultsDatasets.length > 0"
+          [datasets]="dailyResultsDatasets"
+          [labels]="dailyResultsLabels"
+          yAxisLabel="Number of runs">
+        </app-line-chart>
+        <div *ngIf="isLoading" class="loading-placeholder">Loading...</div>
+      </div>
+      
+      <!-- Test case results by status -->
+      <div class="grid-item">
+        <h2>Test case results by status</h2>
+        <app-donut-chart
+          *ngIf="statusChartData.length > 0"
+          [data]="statusChartData"
+          [labels]="statusChartLabels"
+          [colors]="statusChartColors">
+        </app-donut-chart>
+        <div *ngIf="isLoading" class="loading-placeholder">Loading...</div>
+      </div>
+  
+      <!-- We'll add more components in future iterations -->
+    </div>
+  </div>

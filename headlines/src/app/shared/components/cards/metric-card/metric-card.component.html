@@ -1,1 +1,17 @@
-<p>metric-card works!</p>
+<!-- src/app/shared/components/cards/metric-card/metric-card.component.html -->
+<div class="metric-card" [ngClass]="{'clickable': clickable}" [ngStyle]="{'border-top-color': color}">
+    <div class="metric-header">
+      <div class="metric-title">{{ title }}</div>
+      <mat-icon *ngIf="icon" [ngStyle]="{'color': color}">{{ icon }}</mat-icon>
+    </div>
+    
+    <div class="metric-value">{{ value }}</div>
+    
+    <div class="metric-footer" *ngIf="trend">
+      <div class="trend" [ngClass]="trend">
+        <mat-icon *ngIf="trend === 'up'">arrow_upward</mat-icon>
+        <mat-icon *ngIf="trend === 'down'">arrow_downward</mat-icon>
+        <span>{{ trendValue }}</span>
+      </div>
+    </div>
+  </div>
