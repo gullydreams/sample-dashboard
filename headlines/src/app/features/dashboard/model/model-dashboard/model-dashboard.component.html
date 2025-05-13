@@ -1,0 +1,130 @@
+<div class="dashboard-container">
+    <!-- Use our custom filter bar component -->
+    <app-filter-bar
+      [selectedDateRange]="'Last 7 days'"
+      [selectedModel]="modelData.name || ''"
+      [selectedSuite]="''">
+    </app-filter-bar>
+    
+    <!-- Main dashboard content -->
+    <div class="dashboard-content">
+      <!-- First row: 4 charts -->
+      <div class="charts-row">
+        <!-- All Runs (Exploratory/Directed) -->
+        <div class="chart-card">
+          <div class="card-header">
+            <h2>All Runs (Exploratory/Directed)</h2>
+          </div>
+          <div class="card-content" *ngIf="!isLoading">
+            <app-donut-chart
+              [data]="allRunsData"
+              [labels]="allRunsLabels"
+              [colors]="allRunsColors">
+            </app-donut-chart>
+            <div class="chart-legend">
+              <div class="legend-item" *ngFor="let label of allRunsLabels; let i = index">
+                <div class="legend-color" [style.background-color]="allRunsColors[i]"></div>
+                <div class="legend-label">{{ label }}</div>
+                <div class="legend-value">{{ allRunsData[i] }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="loading-placeholder" *ngIf="isLoading">Loading...</div>
+        </div>
+        
+        <!-- Test Case Completion (Directed) -->
+        <div class="chart-card">
+          <div class="card-header">
+            <h2>Test Case Completion (Directed)</h2>
+          </div>
+          <div class="card-content" *ngIf="!isLoading">
+            <app-donut-chart
+              [data]="completionData"
+              [labels]="completionLabels"
+              [colors]="completionColors">
+            </app-donut-chart>
+            <div class="chart-legend">
+              <div class="legend-item" *ngFor="let label of completionLabels; let i = index">
+                <div class="legend-color" [style.background-color]="completionColors[i]"></div>
+                <div class="legend-label">{{ label }}</div>
+                <div class="legend-value">{{ completionData[i] }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="loading-placeholder" *ngIf="isLoading">Loading...</div>
+        </div>
+        
+        <!-- Failure Type -->
+        <div class="chart-card">
+          <div class="card-header">
+            <h2>Failure Type</h2>
+          </div>
+          <div class="card-content" *ngIf="!isLoading && (failureTypeData[0] > 0 || failureTypeData[1] > 0)">
+            <app-donut-chart
+              [data]="failureTypeData"
+              [labels]="failureTypeLabels"
+              [colors]="failureTypeColors">
+            </app-donut-chart>
+            <div class="chart-legend">
+              <div class="legend-item" *ngFor="let label of failureTypeLabels; let i = index">
+                <div class="legend-color" [style.background-color]="failureTypeColors[i]"></div>
+                <div class="legend-label">{{ label }}</div>
+                <div class="legend-value">{{ failureTypeData[i] }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="no-data-message" *ngIf="!isLoading && failureTypeData[0] === 0 && failureTypeData[1] === 0">
+            <div class="no-data-icon">
+              <mat-icon>info</mat-icon>
+            </div>
+            <div class="no-data-text">
+              <p>No failure type data available</p>
+              <p class="no-data-hint">Run the model at least once to enable failure type data.</p>
+            </div>
+            <button class="run-model-button">
+              <mat-icon>play_arrow</mat-icon>
+              Run Model
+            </button>
+          </div>
+          <div class="loading-placeholder" *ngIf="isLoading">Loading...</div>
+        </div>
+        
+        <!-- Coverage -->
+        <div class="chart-card">
+          <div class="card-header">
+            <h2>Coverage</h2>
+          </div>
+          <div class="card-content" *ngIf="!isLoading">
+            <app-donut-chart
+              [data]="coverageData"
+              [labels]="coverageLabels"
+              [colors]="coverageColors">
+            </app-donut-chart>
+            <div class="chart-legend">
+              <div class="legend-item" *ngFor="let label of coverageLabels; let i = index">
+                <div class="legend-color" [style.background-color]="coverageColors[i]"></div>
+                <div class="legend-label">{{ label }}</div>
+                <div class="legend-value">{{ coverageData[i] }}%</div>
+              </div>
+            </div>
+          </div>
+          <div class="loading-placeholder" *ngIf="isLoading">Loading...</div>
+        </div>
+      </div>
+      
+      <!-- Second row: Test Case Breakdown -->
+      <div class="breakdown-row">
+        <div class="chart-card full-width">
+          <div class="card-header">
+            <h2>Test Case Breakdown</h2>
+          </div>
+          <div class="card-content" *ngIf="!isLoading && testBreakdownData.labels">
+            <app-bar-chart
+              [chartData]="testBreakdownData">
+            </app-bar-chart>
+          </div>
+          <div class="loading-placeholder" *ngIf="isLoading || !testBreakdownData.labels">Loading...</div>
+        </div>
+      </div>
+    </div>
+  </div>
