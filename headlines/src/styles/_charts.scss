@@ -1,34 +1,68 @@
+// src/styles/_charts.scss
 .chart-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 250px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+/* Style the view-all button */
+.view-all-button {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(95, 75, 139, 0.1);
   }
-  
-  .chart-title {
+
+  span {
+    margin-right: 4px;
+  }
+
+  mat-icon {
     font-size: 16px;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: var(--text-color);
+    height: 16px;
+    width: 16px;
   }
-  
-  /* Add view-all button styles */
-  .view-all-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    color: var(--primary-color);
-    cursor: pointer;
-    
-    mat-icon {
-      font-size: 16px;
-      height: 16px;
-      width: 16px;
-    }
+}
+
+/* Theme for status indicators */
+.status-indicator {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+
+  &.success {
+    background-color: var(--success-color);
   }
+
+  &.failure {
+    background-color: var(--failure-color);
+  }
+
+  &.error {
+    background-color: var(--error-color);
+  }
+
+  &.neutral {
+    background-color: #9E9E9E;
+  }
+}

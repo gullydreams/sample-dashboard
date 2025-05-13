@@ -32,7 +32,6 @@ export class DonutChartComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     // Update chart when inputs change
     if ((changes['data'] || changes['labels'] || changes['colors'])) {
-      console.log('DonutChart data changed:', this.data, this.labels);
       // Add a small delay to ensure the view is ready
       setTimeout(() => {
         this.initChart();
@@ -52,12 +51,12 @@ export class DonutChartComponent implements OnInit, OnChanges {
       
       const ctx = this.chartCanvas.nativeElement.getContext('2d');
 
-      // Set default colors if not provided
+      // Set default colors if not provided - using CSS variables for consistent theming
       const chartColors = this.colors.length > 0 ? this.colors : [
-        '#4CAF50', // Green for success
-        '#F44336', // Red for failure
-        '#FF9800', // Orange for warning/error
-        '#9E9E9E'  // Grey for cancelled
+        'var(--success-color)', // Green for success
+        'var(--failure-color)', // Red for failure
+        'var(--error-color)',   // Orange for warning/error
+        '#9E9E9E'              // Grey for cancelled
       ];
 
       // Chart configuration
@@ -69,7 +68,8 @@ export class DonutChartComponent implements OnInit, OnChanges {
             data: this.data,
             backgroundColor: chartColors,
             hoverOffset: 4,
-            // Add cutout here if needed
+            borderWidth: 1,
+            borderColor: '#FFFFFF'
           }]
         },
         options: {
@@ -78,13 +78,39 @@ export class DonutChartComponent implements OnInit, OnChanges {
           plugins: {
             legend: {
               position: this.legendPosition,
-              display: true
+              display: true,
+              labels: {
+                color: 'var(--text-color)',
+                font: {
+                  family: "'Roboto', sans-serif"
+                },
+                // Fix for the black color issue in legend with corrected TS errors
+                generateLabels: (chart) => {
+                  return chart.data.labels?.map((label, i) => {
+                    const meta = chart.getDatasetMeta(0);
+                    // Add the required 'active' parameter (false for inactive state)
+                    const style = meta.controller.getStyle(i, false);
+                    
+                    return {
+                      text: label as string,
+                      // Use bracket notation for properties from index signature
+                      fillStyle: style['backgroundColor'],
+                      strokeStyle: style['borderColor'],
+                      lineWidth: style['borderWidth'],
+                      hidden: !chart.getDataVisibility(i),
+                      index: i
+                    };
+                  }) || [];
+                }
+              }
             },
             title: {
               display: !!this.title,
               text: this.title,
+              color: 'var(--text-color)',
               font: {
-                size: 16
+                size: 16,
+                family: "'Roboto', sans-serif"
               }
             },
             tooltip: {

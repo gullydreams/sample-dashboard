@@ -1,13 +1,20 @@
+// src/styles/_variables.scss
 :root {
-    --primary-color: #5F4B8B;
-    --success-color: #4CAF50;
-    --failure-color: #F44336;
-    --error-color: #FF9800;
-    --warning-color: #FF9800;
-    --background-color: #F5F5F5;
-    --card-background: #FFFFFF;
-    --text-color: #333333;
-    --text-secondary: #666666;
-    --border-radius: 8px;
-    --shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
+  --primary-color: #5F4B8B; // Purple for primary elements
+  --success-color: #4CAF50; // Green for success 
+  --failure-color: #F44336; // Red for failure
+  --error-color: #FF9800; // Orange for errors/warnings
+  --warning-color: #FF9800; // Orange for warnings
+  --background-color: #F5F5F5; // Light gray background
+  --card-background: #FFFFFF; // White for cards
+  --text-color: #333333; // Dark gray for text
+  --text-secondary: #666666; // Medium gray for secondary text
+  --border-radius: 8px; // Rounded corners
+  --shadow: 0 2px 5px rgba(0, 0, 0, 0.1); // Subtle shadow
+  
+  // Colors for chart segments
+  --passed-color: #4CAF50;
+  --failed-color: #F44336;
+  --error-color: #FF9800;
+  --cancelled-color: #9E9E9E;
+}

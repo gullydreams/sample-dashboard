@@ -50,7 +50,11 @@ export class LineChartComponent implements OnInit, OnChanges {
         type: 'line' as ChartType,
         data: {
           labels: this.labels,
-          datasets: this.datasets
+          datasets: this.datasets.map(dataset => ({
+            ...dataset,
+            borderColor: dataset.borderColor || 'var(--primary-color)',
+            backgroundColor: dataset.backgroundColor || 'rgba(95, 75, 139, 0.1)'
+          }))
         },
         options: {
           responsive: true,
@@ -58,13 +62,23 @@ export class LineChartComponent implements OnInit, OnChanges {
           plugins: {
             legend: {
               position: this.legendPosition,
-              display: true
+              display: true,
+              labels: {
+                color: 'var(--text-color)',
+                font: {
+                  family: "'Roboto', sans-serif"
+                },
+                // Fix for legend text color
+                usePointStyle: true
+              }
             },
             title: {
               display: !!this.title,
               text: this.title,
+              color: 'var(--text-color)',
               font: {
-                size: 16
+                size: 16,
+                family: "'Roboto', sans-serif"
               }
             }
           },
@@ -73,13 +87,27 @@ export class LineChartComponent implements OnInit, OnChanges {
               beginAtZero: true,
               title: {
                 display: !!this.yAxisLabel,
-                text: this.yAxisLabel
+                text: this.yAxisLabel,
+                color: 'var(--text-color)'
+              },
+              ticks: {
+                color: 'var(--text-secondary)'
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
               }
             },
             x: {
               title: {
                 display: !!this.xAxisLabel,
-                text: this.xAxisLabel
+                text: this.xAxisLabel,
+                color: 'var(--text-color)'
+              },
+              ticks: {
+                color: 'var(--text-secondary)'
+              },
+              grid: {
+                color: 'rgba(0, 0, 0, 0.05)'
               }
             }
           }

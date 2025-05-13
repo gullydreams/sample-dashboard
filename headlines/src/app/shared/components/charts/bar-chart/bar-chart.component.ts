@@ -1,3 +1,4 @@
+// src/app/shared/components/charts/bar-chart/bar-chart.component.ts
 import { Component, ElementRef, Input, OnChanges, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, ChartType } from 'chart.js';
@@ -42,7 +43,11 @@ export class BarChartComponent implements OnChanges {
       type: chartType,
       data: {
         labels: this.chartData.labels,
-        datasets: this.chartData.datasets
+        datasets: this.chartData.datasets.map((dataset: any) => ({
+          ...dataset,
+          // Ensure datasets use theme colors if not explicitly set
+          backgroundColor: dataset.backgroundColor || 'var(--primary-color)'
+        }))
       },
       options: {
         responsive: true,
@@ -53,14 +58,28 @@ export class BarChartComponent implements OnChanges {
             stacked: true,
             title: {
               display: !!this.xAxisLabel,
-              text: this.xAxisLabel
+              text: this.xAxisLabel,
+              color: 'var(--text-color)'
+            },
+            ticks: {
+              color: 'var(--text-secondary)'
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
             }
           },
           y: {
             stacked: true,
             title: {
               display: !!this.yAxisLabel,
-              text: this.yAxisLabel
+              text: this.yAxisLabel,
+              color: 'var(--text-color)'
+            },
+            ticks: {
+              color: 'var(--text-secondary)'
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
             }
           }
         },
@@ -68,7 +87,15 @@ export class BarChartComponent implements OnChanges {
           legend: {
             display: this.chartData.datasets.length > 1,
             position: 'top',
-            align: 'start'
+            align: 'start',
+            labels: {
+              color: 'var(--text-color)',
+              font: {
+                family: "'Roboto', sans-serif"
+              },
+              // Fix for legend text color
+              usePointStyle: true
+            }
           },
           tooltip: {
             mode: 'index',

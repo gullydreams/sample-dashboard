@@ -8,18 +8,11 @@
   </div>
 
   <!-- Use our enhanced filter bar component -->
-  <app-filter-bar
-    [selectedDateRange]="selectedDateRange"
-    [selectedModelName]="selectedModel?.name || ''"
-    [selectedSuiteName]="selectedSuite?.name || ''"
-    [models]="availableModels"
-    [suites]="availableSuites"
-    [isRefreshing]="isRefreshing"
-    (dateRangeChanged)="onDateRangeChanged($event)"
-    (modelChanged)="onModelChanged($event)"
-    (suiteChanged)="onSuiteChanged($event)"
-    (refreshClicked)="onRefreshClicked()"
-    (helpClicked)="onHelpClicked()">
+  <app-filter-bar [selectedDateRange]="selectedDateRange" [selectedModelName]="selectedModel?.name || ''"
+    [selectedSuiteName]="selectedSuite?.name || ''" [models]="availableModels" [suites]="availableSuites"
+    [isRefreshing]="isRefreshing" (dateRangeChanged)="onDateRangeChanged($event)"
+    (modelChanged)="onModelChanged($event)" (suiteChanged)="onSuiteChanged($event)"
+    (refreshClicked)="onRefreshClicked()" (helpClicked)="onHelpClicked()">
   </app-filter-bar>
 
   <!-- Loading Indicator -->
@@ -32,61 +25,31 @@
 
   <!-- Summary metrics -->
   <div class="summary-bar">
-    <app-metric-card 
-      title="Test cases completed" 
-      [value]="summaryData.total || 0" 
-      icon="check_circle"
+    <app-metric-card title="Test cases completed" [value]="summaryData.total || 0" icon="check_circle"
       color="var(--primary-color)">
     </app-metric-card>
-    
-    <app-metric-card 
-      title="Total execution time" 
-      [value]="summaryData.totalExecutionTime || '0s'" 
-      icon="timer" 
+
+    <app-metric-card title="Total execution time" [value]="summaryData.totalExecutionTime || '0s'" icon="timer"
       color="var(--primary-color)">
     </app-metric-card>
-    
-    <app-metric-card 
-      title="Passed" 
-      [value]="summaryData.passed || 0" 
-      [trend]="'up'"
-      [trendValue]="'65%'"
-      icon="done"
+
+    <app-metric-card title="Passed" [value]="summaryData.passed || 0" [trend]="'up'" [trendValue]="'65%'" icon="done"
       color="var(--success-color)">
     </app-metric-card>
-    
-    <app-metric-card 
-      title="Failed" 
-      [value]="summaryData.failed || 0" 
-      [trend]="'down'"
-      [trendValue]="'8%'"
-      icon="error"
+
+    <app-metric-card title="Failed" [value]="summaryData.failed || 0" [trend]="'down'" [trendValue]="'8%'" icon="error"
       color="var(--failure-color)">
     </app-metric-card>
-    
-    <app-metric-card 
-      title="Error" 
-      [value]="summaryData.error || 0" 
-      [trend]="'neutral'"
-      [trendValue]="'12%'"
-      icon="warning"
-      color="var(--error-color)">
+
+    <app-metric-card title="Error" [value]="summaryData.error || 0" [trend]="'neutral'" [trendValue]="'12%'"
+      icon="warning" color="var(--error-color)">
     </app-metric-card>
-    
-    <app-metric-card 
-      title="Cancelled" 
-      [value]="summaryData.cancelled || 0" 
-      [trend]="'neutral'"
-      [trendValue]="'15%'"
-      icon="cancel"
-      color="#9E9E9E">
+
+    <app-metric-card title="Cancelled" [value]="summaryData.cancelled || 0" [trend]="'neutral'" [trendValue]="'15%'"
+      icon="cancel" color="#9E9E9E">
     </app-metric-card>
-    
-    <app-metric-card 
-      title="In progress" 
-      [value]="summaryData.inProgress || 0" 
-      icon="hourglass_empty"
-      color="#2196F3">
+
+    <app-metric-card title="In progress" [value]="summaryData.inProgress || 0" icon="hourglass_empty" color="#2196F3">
     </app-metric-card>
   </div>
 
@@ -97,16 +60,13 @@
       <div class="section-header">
         <h2>Test case runs per day</h2>
         <div class="view-all-button" (click)="onViewAllClick('runs-per-day')">
-          <span>View all</span>
+          <span>View details</span>
           <mat-icon>arrow_forward</mat-icon>
         </div>
       </div>
       <div class="section-content">
-        <app-line-chart 
-          *ngIf="dailyResultsDatasets.length > 0"
-          [datasets]="dailyResultsDatasets"
-          [labels]="dailyResultsLabels"
-          yAxisLabel="Number of runs">
+        <app-line-chart *ngIf="dailyResultsDatasets.length > 0" [datasets]="dailyResultsDatasets"
+          [labels]="dailyResultsLabels" yAxisLabel="Number of runs">
         </app-line-chart>
         <div *ngIf="dailyResultsDatasets.length === 0 && !isLoading" class="no-data-message">
           <mat-icon>info</mat-icon>
@@ -114,7 +74,7 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Test case results by status -->
     <div class="chart-section results-by-status">
       <div class="section-header">
@@ -125,10 +85,7 @@
         </div>
       </div>
       <div class="section-content">
-        <app-donut-chart
-          *ngIf="statusChartData.length > 0"
-          [data]="statusChartData"
-          [labels]="statusChartLabels"
+        <app-donut-chart *ngIf="statusChartData.length > 0" [data]="statusChartData" [labels]="statusChartLabels"
           [colors]="statusChartColors">
         </app-donut-chart>
         <div *ngIf="statusChartData.length === 0 && !isLoading" class="no-data-message">
@@ -138,7 +95,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Table sections -->
   <div class="table-sections">
     <!-- Top 10 longest running test cases -->
@@ -151,15 +108,12 @@
         </div>
       </div>
       <div class="section-content">
-        <app-data-table
-          [data]="longestRunningTestCases"
-          [columns]="longestRunningColumns"
-          [loading]="tablesLoading.longest"
-          (rowClick)="onTestCaseClick($event)">
+        <app-data-table [data]="longestRunningTestCases" [columns]="longestRunningColumns"
+          [loading]="tablesLoading.longest" (rowClick)="onTestCaseClick($event)">
         </app-data-table>
       </div>
     </div>
-    
+
     <!-- Top 10 test case failures -->
     <div class="section table-section failures">
       <div class="section-header">
@@ -170,15 +124,12 @@
         </div>
       </div>
       <div class="section-content">
-        <app-data-table
-          [data]="topTestCaseFailures"
-          [columns]="failuresColumns"
-          [loading]="tablesLoading.failures"
+        <app-data-table [data]="topTestCaseFailures" [columns]="failuresColumns" [loading]="tablesLoading.failures"
           (rowClick)="onTestCaseClick($event)">
         </app-data-table>
       </div>
     </div>
-    
+
     <!-- Top 10 test case errors -->
     <div class="section table-section errors">
       <div class="section-header">
@@ -189,10 +140,7 @@
         </div>
       </div>
       <div class="section-content">
-        <app-data-table
-          [data]="topTestCaseErrors"
-          [columns]="errorsColumns"
-          [loading]="tablesLoading.errors"
+        <app-data-table [data]="topTestCaseErrors" [columns]="errorsColumns" [loading]="tablesLoading.errors"
           (rowClick)="onTestCaseClick($event)">
         </app-data-table>
       </div>

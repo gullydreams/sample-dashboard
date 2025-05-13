@@ -233,10 +233,10 @@ export class TestCaseDashboardComponent implements OnInit {
     this.statusChartLabels = ['Passed', 'Failed', 'Error', 'Cancelled'];
 
     this.statusChartColors = [
-      'var(--success-color)',
-      'var(--failure-color)',
+      'var(--passed-color)',
+      'var(--failed-color)',
       'var(--error-color)',
-      '#9E9E9E'
+      'var(--cancelled-color)'
     ];
   }
 
@@ -244,35 +244,39 @@ export class TestCaseDashboardComponent implements OnInit {
     // Extract labels (dates)
     this.dailyResultsLabels = dailyResults.map(result => result.date);
 
-    // Prepare datasets
+    // Prepare datasets with consistent colors using CSS variables
     this.dailyResultsDatasets = [
       {
         label: 'Passed',
         data: dailyResults.map(result => result.passed),
         borderColor: 'var(--success-color)',
         backgroundColor: 'rgba(76, 175, 80, 0.1)',
-        tension: 0.4
+        tension: 0.4,
+        borderWidth: 2
       },
       {
         label: 'Failed',
         data: dailyResults.map(result => result.failed),
         borderColor: 'var(--failure-color)',
         backgroundColor: 'rgba(244, 67, 54, 0.1)',
-        tension: 0.4
+        tension: 0.4,
+        borderWidth: 2
       },
       {
         label: 'Error',
         data: dailyResults.map(result => result.error),
         borderColor: 'var(--error-color)',
         backgroundColor: 'rgba(255, 152, 0, 0.1)',
-        tension: 0.4
+        tension: 0.4,
+        borderWidth: 2
       },
       {
         label: 'Cancelled',
         data: dailyResults.map(result => result.cancelled),
         borderColor: '#9E9E9E',
         backgroundColor: 'rgba(158, 158, 158, 0.1)',
-        tension: 0.4
+        tension: 0.4,
+        borderWidth: 2
       }
     ];
   }
