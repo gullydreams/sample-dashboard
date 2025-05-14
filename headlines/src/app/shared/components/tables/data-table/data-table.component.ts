@@ -21,7 +21,91 @@ import { MatButtonModule } from '@angular/material/button';
     MatButtonModule
   ],
   templateUrl: './data-table.component.html',
-  styleUrls: ['./data-table.component.scss']
+  styleUrls: ['./data-table.component.scss'],
+  // Add these styles to match the Eggplant DAI style in the reference images
+  styles: [`
+    :host {
+      display: block;
+      width: 100%;
+    }
+    
+    :host ::ng-deep .mat-mdc-table {
+      background-color: #FFFFFF !important;
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: none !important;
+    }
+    
+    :host ::ng-deep .mat-mdc-header-row {
+      background-color: #F7F7F7 !important;
+      border-bottom: 1px solid #E0E0E0;
+      height: 48px !important;
+    }
+    
+    :host ::ng-deep .mat-mdc-header-cell {
+      color: #333333 !important;
+      font-weight: 500 !important;
+      font-size: 14px !important;
+      padding: 0 16px !important;
+      text-align: left;
+    }
+    
+    :host ::ng-deep .mat-mdc-cell {
+      color: #333333 !important;
+      font-size: 14px !important;
+      padding: 0 16px !important;
+      border-bottom: 1px solid #F0F0F0 !important;
+      height: 48px !important;
+    }
+    
+    :host ::ng-deep .mat-mdc-row {
+      height: 48px !important;
+      background-color: #FFFFFF !important;
+    }
+    
+    :host ::ng-deep .mat-mdc-row:hover {
+      background-color: #F5F5F5 !important;
+    }
+    
+    :host ::ng-deep .error-cell {
+      color: #F44336 !important;
+      font-weight: 500 !important;
+    }
+    
+    :host ::ng-deep .warning-cell {
+      color: #FF9800 !important;
+      font-weight: 500 !important;
+    }
+    
+    :host ::ng-deep .mat-icon-button {
+      color: #757575 !important;
+    }
+    
+    :host ::ng-deep .mat-paginator {
+      background-color: transparent !important;
+    }
+    
+    /* Empty state styling */
+    :host ::ng-deep .empty-row {
+      padding: 16px !important;
+      text-align: center;
+      color: #757575 !important;
+    }
+    
+    /* Loading state styling */
+    :host ::ng-deep .loading-message {
+      color: #757575 !important;
+    }
+    
+    /* Additional style to match the Eggplant DAI tables */
+    :host ::ng-deep .mat-column-id {
+      width: 100px;
+    }
+    
+    :host ::ng-deep .clickable-row {
+      cursor: pointer;
+    }
+  `]
 })
 export class DataTableComponent implements OnInit {
   @Input() data: any[] = [];

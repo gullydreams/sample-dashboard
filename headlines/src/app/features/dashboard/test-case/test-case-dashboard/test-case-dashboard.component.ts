@@ -232,11 +232,12 @@ export class TestCaseDashboardComponent implements OnInit {
 
     this.statusChartLabels = ['Passed', 'Failed', 'Error', 'Cancelled'];
 
+    // Use explicit hex color values like in other working dashboards
     this.statusChartColors = [
-      'var(--passed-color)',
-      'var(--failed-color)',
-      'var(--error-color)',
-      'var(--cancelled-color)'
+      '#4CAF50', // Green for passed
+      '#F44336', // Red for failed
+      '#FF9800', // Orange for error
+      '#9E9E9E'  // Grey for cancelled
     ];
   }
 
@@ -244,37 +245,37 @@ export class TestCaseDashboardComponent implements OnInit {
     // Extract labels (dates)
     this.dailyResultsLabels = dailyResults.map(result => result.date);
 
-    // Prepare datasets with consistent colors using CSS variables
+    // Prepare datasets with explicit colors instead of CSS variables
     this.dailyResultsDatasets = [
       {
         label: 'Passed',
         data: dailyResults.map(result => result.passed),
-        borderColor: 'var(--success-color)',
-        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+        borderColor: '#4CAF50', // Explicit green
+        backgroundColor: 'rgba(76, 175, 80, 0.1)', // Transparent green
         tension: 0.4,
         borderWidth: 2
       },
       {
         label: 'Failed',
         data: dailyResults.map(result => result.failed),
-        borderColor: 'var(--failure-color)',
-        backgroundColor: 'rgba(244, 67, 54, 0.1)',
+        borderColor: '#F44336', // Explicit red
+        backgroundColor: 'rgba(244, 67, 54, 0.1)', // Transparent red
         tension: 0.4,
         borderWidth: 2
       },
       {
         label: 'Error',
         data: dailyResults.map(result => result.error),
-        borderColor: 'var(--error-color)',
-        backgroundColor: 'rgba(255, 152, 0, 0.1)',
+        borderColor: '#FF9800', // Explicit orange
+        backgroundColor: 'rgba(255, 152, 0, 0.1)', // Transparent orange
         tension: 0.4,
         borderWidth: 2
       },
       {
         label: 'Cancelled',
         data: dailyResults.map(result => result.cancelled),
-        borderColor: '#9E9E9E',
-        backgroundColor: 'rgba(158, 158, 158, 0.1)',
+        borderColor: '#9E9E9E', // Explicit grey
+        backgroundColor: 'rgba(158, 158, 158, 0.1)', // Transparent grey
         tension: 0.4,
         borderWidth: 2
       }
