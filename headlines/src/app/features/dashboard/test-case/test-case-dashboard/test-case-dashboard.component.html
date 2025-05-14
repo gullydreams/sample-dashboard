@@ -53,96 +53,102 @@
     </app-metric-card>
   </div>
 
-  <!-- Chart sections -->
-  <div class="charts-row">
-    <!-- Test case runs per day -->
-    <div class="chart-section runs-per-day">
-      <div class="section-header">
-        <h2>Test case runs per day</h2>
-        <div class="view-all-button" (click)="onViewAllClick('runs-per-day')">
-          <span>View details</span>
-          <mat-icon>arrow_forward</mat-icon>
+  <!-- Modified dashboard layout organization -->
+  <div class="dashboard-content">
+    <!-- Row 1: Line chart (full width) -->
+    <div class="dashboard-row">
+      <!-- Test case runs per day -->
+      <div class="section chart-section runs-per-day">
+        <div class="section-header">
+          <h2>Test case runs per day</h2>
+          <div class="view-all-button" (click)="onViewAllClick('runs-per-day')">
+            <span>View details</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
         </div>
-      </div>
-      <div class="section-content">
-        <app-line-chart *ngIf="dailyResultsDatasets.length > 0" [datasets]="dailyResultsDatasets"
-          [labels]="dailyResultsLabels" yAxisLabel="Number of runs">
-        </app-line-chart>
-        <div *ngIf="dailyResultsDatasets.length === 0 && !isLoading" class="no-data-message">
-          <mat-icon>info</mat-icon>
-          <p>No data available for the selected filters.</p>
+        <div class="section-content">
+          <app-line-chart *ngIf="dailyResultsDatasets.length > 0" [datasets]="dailyResultsDatasets"
+            [labels]="dailyResultsLabels" yAxisLabel="Number of runs">
+          </app-line-chart>
+          <div *ngIf="dailyResultsDatasets.length === 0 && !isLoading" class="no-data-message">
+            <mat-icon>info</mat-icon>
+            <p>No data available for the selected filters.</p>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Test case results by status -->
-    <div class="chart-section results-by-status">
-      <div class="section-header">
-        <h2>Test case results by status</h2>
-        <div class="view-all-button" (click)="onViewAllClick('results-by-status')">
-          <span>View all</span>
-          <mat-icon>arrow_forward</mat-icon>
+    <!-- Row 2: Donut chart and Top 10 longest running test cases side by side -->
+    <div class="dashboard-row">
+      <!-- Test case results by status (Donut chart) -->
+      <div class="section chart-section results-by-status">
+        <div class="section-header">
+          <h2>Test case results by status</h2>
+          <div class="view-all-button" (click)="onViewAllClick('results-by-status')">
+            <span>View all</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </div>
+        <div class="section-content">
+          <app-donut-chart *ngIf="statusChartData.length > 0" [data]="statusChartData" [labels]="statusChartLabels"
+            [colors]="statusChartColors">
+          </app-donut-chart>
+          <div *ngIf="statusChartData.length === 0 && !isLoading" class="no-data-message">
+            <mat-icon>info</mat-icon>
+            <p>No data available for the selected filters.</p>
+          </div>
         </div>
       </div>
-      <div class="section-content">
-        <app-donut-chart *ngIf="statusChartData.length > 0" [data]="statusChartData" [labels]="statusChartLabels"
-          [colors]="statusChartColors">
-        </app-donut-chart>
-        <div *ngIf="statusChartData.length === 0 && !isLoading" class="no-data-message">
-          <mat-icon>info</mat-icon>
-          <p>No data available for the selected filters.</p>
+
+      <!-- Top 10 longest running test cases -->
+      <div class="section table-section longest-running">
+        <div class="section-header">
+          <h2>Top 10 longest running test cases</h2>
+          <div class="view-all-button" (click)="onViewAllClick('longest-running')">
+            <span>View all</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </div>
+        <div class="section-content">
+          <app-data-table [data]="longestRunningTestCases" [columns]="longestRunningColumns"
+            [loading]="tablesLoading.longest" (rowClick)="onTestCaseClick($event)">
+          </app-data-table>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Table sections -->
-  <div class="table-sections">
-    <!-- Top 10 longest running test cases -->
-    <div class="section table-section longest-running">
-      <div class="section-header">
-        <h2>Top 10 longest running test cases</h2>
-        <div class="view-all-button" (click)="onViewAllClick('longest-running')">
-          <span>View all</span>
-          <mat-icon>arrow_forward</mat-icon>
+    <!-- Row 3: Top 10 test case failures and Top 10 test case errors side by side -->
+    <div class="dashboard-row">
+      <!-- Top 10 test case failures -->
+      <div class="section table-section failures">
+        <div class="section-header">
+          <h2>Top 10 test case failures</h2>
+          <div class="view-all-button" (click)="onViewAllClick('failures')">
+            <span>View all</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </div>
+        <div class="section-content">
+          <app-data-table [data]="topTestCaseFailures" [columns]="failuresColumns" 
+            [loading]="tablesLoading.failures" (rowClick)="onTestCaseClick($event)">
+          </app-data-table>
         </div>
       </div>
-      <div class="section-content">
-        <app-data-table [data]="longestRunningTestCases" [columns]="longestRunningColumns"
-          [loading]="tablesLoading.longest" (rowClick)="onTestCaseClick($event)">
-        </app-data-table>
-      </div>
-    </div>
 
-    <!-- Top 10 test case failures -->
-    <div class="section table-section failures">
-      <div class="section-header">
-        <h2>Top 10 test case failures</h2>
-        <div class="view-all-button" (click)="onViewAllClick('failures')">
-          <span>View all</span>
-          <mat-icon>arrow_forward</mat-icon>
+      <!-- Top 10 test case errors -->
+      <div class="section table-section errors">
+        <div class="section-header">
+          <h2>Top 10 test case errors</h2>
+          <div class="view-all-button" (click)="onViewAllClick('errors')">
+            <span>View all</span>
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
         </div>
-      </div>
-      <div class="section-content">
-        <app-data-table [data]="topTestCaseFailures" [columns]="failuresColumns" [loading]="tablesLoading.failures"
-          (rowClick)="onTestCaseClick($event)">
-        </app-data-table>
-      </div>
-    </div>
-
-    <!-- Top 10 test case errors -->
-    <div class="section table-section errors">
-      <div class="section-header">
-        <h2>Top 10 test case errors</h2>
-        <div class="view-all-button" (click)="onViewAllClick('errors')">
-          <span>View all</span>
-          <mat-icon>arrow_forward</mat-icon>
+        <div class="section-content">
+          <app-data-table [data]="topTestCaseErrors" [columns]="errorsColumns" 
+            [loading]="tablesLoading.errors" (rowClick)="onTestCaseClick($event)">
+          </app-data-table>
         </div>
-      </div>
-      <div class="section-content">
-        <app-data-table [data]="topTestCaseErrors" [columns]="errorsColumns" [loading]="tablesLoading.errors"
-          (rowClick)="onTestCaseClick($event)">
-        </app-data-table>
       </div>
     </div>
   </div>

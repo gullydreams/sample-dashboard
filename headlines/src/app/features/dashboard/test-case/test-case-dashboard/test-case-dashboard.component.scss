@@ -99,19 +99,22 @@
   }
 }
 
-/* Charts row layout */
-.charts-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 16px;
-  margin-bottom: 24px;
-}
-
-/* Table sections layout */
-.table-sections {
+/* Dashboard content organization */
+.dashboard-content {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+/* Dashboard row styling */
+.dashboard-row {
+  display: flex;
+  gap: 24px;
+  
+  /* Each section takes equal space by default */
+  .section {
+    flex: 1;
+  }
 }
 
 /* Section styling */
@@ -171,6 +174,11 @@
   padding: 0; /* Remove padding for tables to allow them to use full width */
 }
 
+/* Make donut chart section a bit narrower */
+.results-by-status {
+  flex: 0.7; /* Take less space than the table on the same row */
+}
+
 /* No data message */
 .no-data-message {
   display: flex;
@@ -218,8 +226,12 @@
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-  .charts-row {
-    grid-template-columns: 1fr 1fr;
+  .dashboard-row {
+    flex-wrap: wrap;
+    
+    .section {
+      flex: 1 1 100%;
+    }
   }
   
   .summary-bar {
@@ -233,10 +245,6 @@
 }
 
 @media (max-width: 768px) {
-  .charts-row {
-    grid-template-columns: 1fr;
-  }
-  
   .summary-bar {
     flex-wrap: wrap;
     
