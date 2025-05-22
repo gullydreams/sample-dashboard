@@ -69,9 +69,7 @@
                                 <div class="chart-content">
                                     <!-- Use Google 3D Pie Chart -->
                                     <app-google-pie-chart [data]="chart.data" [labels]="chart.labels"
-                                        [colors]="chart.colors" [is3D]="true" [showLegend]="false"
-                                        [backgroundColor]="'transparent'" [pieSliceText]="'value'"
-                                        [showDataLabels]="true" [showBothValueAndPercentage]="true">
+                                        [colors]="chart.colors" [showConnectors]="false">
                                     </app-google-pie-chart>
                                 </div>
                             </div>
