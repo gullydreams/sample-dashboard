@@ -68,10 +68,15 @@ export interface DateRangeOption {
               [disabled]="!useCases || useCases.length === 0">
         <mat-icon class="filter-icon">category</mat-icon>
         <span class="filter-label">Use Case:</span>
-        <span class="filter-value">{{ selectedUseCaseName || 'Select Use Case' }}</span>
+        <span class="filter-value">{{ selectedUseCaseName || 'All Use Cases' }}</span>
         <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
       </button>
       <mat-menu #useCaseMenu="matMenu" class="filter-menu">
+        <button mat-menu-item (click)="selectUseCase(null)"
+                [class.selected-item]="!selectedUseCaseName || selectedUseCaseName === 'All Use Cases'">
+          <mat-icon class="menu-icon">view_module</mat-icon>
+          All Use Cases
+        </button>
         <button mat-menu-item *ngFor="let useCase of useCases" 
                 (click)="selectUseCase(useCase)"
                 [class.selected-item]="selectedUseCaseName === useCase.name">
@@ -79,8 +84,6 @@ export interface DateRangeOption {
           {{ useCase.name }}
         </button>
       </mat-menu>
-      
-      <div class="spacer"></div>
       
       <!-- Refresh button -->
       <button class="refresh-button" (click)="refresh()" [disabled]="isRefreshing" 
@@ -429,9 +432,14 @@ export class HealthFilterBarComponent {
     }
   }
 
-  selectUseCase(useCase: UseCase): void {
-    this.selectedUseCaseName = useCase.name;
-    this.useCaseChanged.emit(useCase);
+  selectUseCase(useCase: UseCase | null): void {
+    if (useCase === null) {
+      this.selectedUseCaseName = 'All Use Cases';
+      this.useCaseChanged.emit(null as any); // Emit null to indicate "All"
+    } else {
+      this.selectedUseCaseName = useCase.name;
+      this.useCaseChanged.emit(useCase);
+    }
   }
 
   refresh(): void {

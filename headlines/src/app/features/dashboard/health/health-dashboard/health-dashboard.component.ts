@@ -74,6 +74,7 @@ export class HealthDashboardComponent implements OnInit {
     this.tenantDataService.getTenants().subscribe({
       next: (tenants) => {
         this.availableTenants = tenants;
+
         // Set default to Recoveries tenant and All use case for CHARTS only
         const defaultTenant = tenants.find(t => t.id === 'recoveries') || tenants[0];
         if (defaultTenant) {
@@ -83,9 +84,12 @@ export class HealthDashboardComponent implements OnInit {
           const defaultUseCase = defaultTenant.useCases.find(uc => uc.id === 'all') || defaultTenant.useCases[0];
           this.chartsSelectedUseCase = defaultUseCase;
 
-          // Summary starts with no filter (shows all tenants)
-          this.summarySelectedTenant = null;
-          this.summarySelectedUseCase = null;
+          // SUMMARY starts with "All" for both tenant and use case
+          this.summarySelectedTenant = null; // This means "All Tenants"
+          this.summarySelectedUseCase = null; // This means "All Use Cases"
+
+          // Set available use cases to all possible use cases from all tenants
+          this.setAllAvailableUseCases();
 
           // Load data after setting defaults
           this.loadHealthData();
@@ -97,6 +101,21 @@ export class HealthDashboardComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private setAllAvailableUseCases(): void {
+    // Collect all unique use cases from all tenants
+    const allUseCases = new Map<string, UseCase>();
+
+    this.availableTenants.forEach(tenant => {
+      tenant.useCases.forEach(useCase => {
+        if (!allUseCases.has(useCase.id)) {
+          allUseCases.set(useCase.id, useCase);
+        }
+      });
+    });
+
+    this.availableUseCases = Array.from(allUseCases.values());
   }
 
   public loadHealthData(forceRefresh: boolean = false): void {
@@ -148,9 +167,12 @@ export class HealthDashboardComponent implements OnInit {
   private loadSingleTenantSummary(forceRefresh: boolean = false): void {
     if (!this.summarySelectedTenant) return;
 
+    // If no use case is selected, use 'all' as default
+    const useCaseId = this.summarySelectedUseCase?.id || 'all';
+
     this.tenantDataService.getTenantHealthData(
       this.summarySelectedTenant.id,
-      this.summarySelectedUseCase?.id || 'all',
+      useCaseId,
       forceRefresh
     ).subscribe({
       next: (data) => {
@@ -168,7 +190,6 @@ export class HealthDashboardComponent implements OnInit {
       }
     });
   }
-
   private formatTenantSummary(tenant: Tenant, data: any): TenantSummary {
     const accounts = data.accounts || {};
 
@@ -259,13 +280,17 @@ export class HealthDashboardComponent implements OnInit {
 
   onSummaryTenantChanged(tenant: Tenant | null): void {
     this.summarySelectedTenant = tenant;
+
     if (tenant) {
+      // When a specific tenant is selected, show only its use cases
       this.availableUseCases = tenant.useCases;
-      this.summarySelectedUseCase = null;
+      this.summarySelectedUseCase = null; // Reset to "All" for this tenant
     } else {
-      // When "All Tenants" is selected, reset use case
-      this.summarySelectedUseCase = null;
+      // When "All Tenants" is selected, show all possible use cases
+      this.setAllAvailableUseCases();
+      this.summarySelectedUseCase = null; // Reset to "All Use Cases"
     }
+
     this.loadSummaryData();
   }
 

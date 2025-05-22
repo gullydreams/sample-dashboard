@@ -28,8 +28,8 @@
 
     <!-- SUMMARY Health Filter Bar -->
     <app-health-filter-bar [filterLabel]="'Summary Report For :'" [selectedDateRange]="summarySelectedDateRange"
-        [selectedTenantName]="summarySelectedTenant?.name || ''"
-        [selectedUseCaseName]="summarySelectedUseCase?.name || ''" [tenants]="availableTenants"
+        [selectedTenantName]="summarySelectedTenant?.name || 'All Tenants'"
+        [selectedUseCaseName]="summarySelectedUseCase?.name || 'All Use Cases'" [tenants]="availableTenants"
         [useCases]="availableUseCases" [isRefreshing]="isRefreshing" [showAllTenantsOption]="true"
         (dateRangeChanged)="onSummaryDateRangeChanged($event)" (tenantChanged)="onSummaryTenantChanged($event)"
         (useCaseChanged)="onSummaryUseCaseChanged($event)" (refreshClicked)="onSummaryRefreshClicked()"
