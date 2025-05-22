@@ -7,12 +7,14 @@
         <button class="retry-button" (click)="loadHealthData(true)">Retry</button>
     </div>
 
-    <!-- Health Filter Bar -->
-    <app-health-filter-bar [selectedDateRange]="selectedDateRange" [selectedTenantName]="selectedTenant?.name || ''"
-        [selectedUseCaseName]="selectedUseCase?.name || ''" [tenants]="availableTenants" [useCases]="availableUseCases"
-        [isRefreshing]="isRefreshing" (dateRangeChanged)="onDateRangeChanged($event)"
-        (tenantChanged)="onTenantChanged($event)" (useCaseChanged)="onUseCaseChanged($event)"
-        (refreshClicked)="onRefreshClicked()" (helpClicked)="onHelpClicked()">
+    <!-- SUMMARY Health Filter Bar -->
+    <app-health-filter-bar [filterLabel]="'Summary Report For :'" [selectedDateRange]="summarySelectedDateRange"
+        [selectedTenantName]="summarySelectedTenant?.name || ''"
+        [selectedUseCaseName]="summarySelectedUseCase?.name || ''" [tenants]="availableTenants"
+        [useCases]="availableUseCases" [isRefreshing]="isRefreshing"
+        (dateRangeChanged)="onSummaryDateRangeChanged($event)" (tenantChanged)="onSummaryTenantChanged($event)"
+        (useCaseChanged)="onSummaryUseCaseChanged($event)" (refreshClicked)="onSummaryRefreshClicked()"
+        (helpClicked)="onSummaryHelpClicked()">
     </app-health-filter-bar>
 
     <!-- Loading Indicator -->
@@ -46,13 +48,23 @@
         </app-metric-card>
     </div>
 
+    <!-- CHARTS Health Filter Bar -->
+    <app-health-filter-bar [filterLabel]="'Current Status Reports For :'" [selectedDateRange]="chartsSelectedDateRange"
+        [selectedTenantName]="chartsSelectedTenant?.name || ''"
+        [selectedUseCaseName]="chartsSelectedUseCase?.name || ''" [tenants]="availableTenants"
+        [useCases]="availableUseCases" [isRefreshing]="false" (dateRangeChanged)="onChartsDateRangeChanged($event)"
+        (tenantChanged)="onChartsTenantChanged($event)" (useCaseChanged)="onChartsUseCaseChanged($event)"
+        (refreshClicked)="onChartsRefreshClicked()" (helpClicked)="onChartsHelpClicked()">
+    </app-health-filter-bar>
+
     <!-- Account Pie Charts Grouped by Use Case - Using Google Charts -->
     <div class="dashboard-content" *ngIf="!isLoading">
         <div class="use-case-groups" *ngIf="accountChartGroups.length > 0">
             <div class="use-case-group" *ngFor="let group of accountChartGroups; trackBy: trackByGroupTitle">
                 <div class="group-header">
                     <h2 class="group-title">{{ group.useCaseTitle }}</h2>
-                    <div class="group-subtitle">{{ selectedTenant?.name }} - {{ group.useCaseTitle }} Accounts</div>
+                    <div class="group-subtitle">{{ chartsSelectedTenant?.name }} - {{ group.useCaseTitle }} Accounts
+                    </div>
                 </div>
 
                 <div class="group-content">

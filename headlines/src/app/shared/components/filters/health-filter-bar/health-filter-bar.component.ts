@@ -19,6 +19,11 @@ export interface DateRangeOption {
     imports: [CommonModule, MatIconModule, MatMenuModule, MatButtonModule],
     template: `
     <div class="filter-bar">
+      <!-- Filter Label -->
+      <div class="filter-label-section">
+        <span class="main-filter-label">{{ filterLabel }}</span>
+      </div>
+      
       <!-- Date range filter -->
       <button class="filter-item date-filter" [matMenuTriggerFor]="dateMenu">
         <mat-icon class="filter-icon">calendar_today</mat-icon>
@@ -131,6 +136,17 @@ export interface DateRangeOption {
       padding: 8px 16px;
       margin-bottom: 16px;
       box-shadow: var(--shadow);
+    }
+    
+    .filter-label-section {
+      margin-right: 16px;
+      
+      .main-filter-label {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--primary-color);
+        white-space: nowrap;
+      }
     }
     
     .filter-item {
@@ -364,6 +380,7 @@ export interface DateRangeOption {
   `]
 })
 export class HealthFilterBarComponent {
+    @Input() filterLabel: string = 'Health Report For :'; // New input for the label
     @Input() selectedDateRange: string = 'Last 7 days';
     @Input() selectedTenantName: string = '';
     @Input() selectedUseCaseName: string = '';

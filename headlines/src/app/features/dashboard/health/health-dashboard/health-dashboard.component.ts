@@ -16,7 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
         MatIconModule,
         MatSnackBarModule,
         MetricCardComponent,
-        GooglePieChartComponent, // Use Google Charts instead of DonutChartComponent
+        GooglePieChartComponent,
         HealthFilterBarComponent
     ],
     templateUrl: './health-dashboard.component.html',
@@ -26,10 +26,15 @@ export class HealthDashboardComponent implements OnInit {
     // Summary data
     summaryData: any = {};
 
-    // Filter state
-    selectedDateRange: string = 'Last 7 days';
-    selectedTenant: Tenant | null = null;
-    selectedUseCase: UseCase | null = null;
+    // Filter state for SUMMARY
+    summarySelectedDateRange: string = 'Last 7 days';
+    summarySelectedTenant: Tenant | null = null;
+    summarySelectedUseCase: UseCase | null = null;
+
+    // Filter state for CHARTS
+    chartsSelectedDateRange: string = 'Last 7 days';
+    chartsSelectedTenant: Tenant | null = null;
+    chartsSelectedUseCase: UseCase | null = null;
 
     // Available tenants and use cases
     availableTenants: Tenant[] = [];
@@ -57,13 +62,20 @@ export class HealthDashboardComponent implements OnInit {
         this.tenantDataService.getTenants().subscribe({
             next: (tenants) => {
                 this.availableTenants = tenants;
-                // Set default to Recoveries tenant and All use case
+                // Set default to Recoveries tenant and All use case for BOTH filter bars
                 const defaultTenant = tenants.find(t => t.id === 'recoveries') || tenants[0];
                 if (defaultTenant) {
-                    this.selectedTenant = defaultTenant;
+                    // Set for summary
+                    this.summarySelectedTenant = defaultTenant;
+                    // Set for charts
+                    this.chartsSelectedTenant = defaultTenant;
+
                     this.availableUseCases = defaultTenant.useCases;
-                    // Set default use case to "All"
-                    this.selectedUseCase = defaultTenant.useCases.find(uc => uc.id === 'all') || defaultTenant.useCases[0];
+                    // Set default use case to "All" for both
+                    const defaultUseCase = defaultTenant.useCases.find(uc => uc.id === 'all') || defaultTenant.useCases[0];
+                    this.summarySelectedUseCase = defaultUseCase;
+                    this.chartsSelectedUseCase = defaultUseCase;
+
                     // Load data after setting defaults
                     this.loadHealthData();
                 }
@@ -85,24 +97,26 @@ export class HealthDashboardComponent implements OnInit {
             this.isLoading = true;
         }
 
-        if (!this.selectedTenant) {
-            this.isLoading = false;
-            this.isRefreshing = false;
-            return;
-        }
+        // Load summary data based on summary filters
+        this.loadSummaryData(forceRefresh);
 
-        // Get health data for selected tenant and use case
+        // Load charts data based on charts filters
+        this.loadChartsData(forceRefresh);
+    }
+
+    private loadSummaryData(forceRefresh: boolean = false): void {
+        if (!this.summarySelectedTenant) return;
+
         this.tenantDataService.getTenantHealthData(
-            this.selectedTenant.id,
-            this.selectedUseCase?.id,
+            this.summarySelectedTenant.id,
+            this.summarySelectedUseCase?.id,
             forceRefresh
         ).subscribe({
             next: (data) => {
                 this.summaryData = this.calculateHealthMetrics(data.summary);
-                this.prepareAccountChartGroups(data.accounts);
             },
             error: (error) => {
-                this.handleError('Failed to load health data.', error);
+                this.handleError('Failed to load summary data.', error);
             },
             complete: () => {
                 if (forceRefresh) {
@@ -110,6 +124,23 @@ export class HealthDashboardComponent implements OnInit {
                 } else {
                     this.isLoading = false;
                 }
+            }
+        });
+    }
+
+    private loadChartsData(forceRefresh: boolean = false): void {
+        if (!this.chartsSelectedTenant) return;
+
+        this.tenantDataService.getTenantHealthData(
+            this.chartsSelectedTenant.id,
+            this.chartsSelectedUseCase?.id,
+            forceRefresh
+        ).subscribe({
+            next: (data) => {
+                this.prepareAccountChartGroups(data.accounts);
+            },
+            error: (error) => {
+                this.handleError('Failed to load charts data.', error);
             }
         });
     }
@@ -218,30 +249,59 @@ export class HealthDashboardComponent implements OnInit {
         return accountType.toUpperCase(); // ACH, DEBIT
     }
 
-    // Handler for filter-bar events
-    onDateRangeChanged(option: any): void {
-        this.selectedDateRange = option.label;
-        this.loadHealthData();
+    // Handler for SUMMARY filter-bar events
+    onSummaryDateRangeChanged(option: any): void {
+        this.summarySelectedDateRange = option.label;
+        this.loadSummaryData();
     }
 
-    onTenantChanged(tenant: Tenant): void {
-        this.selectedTenant = tenant;
+    onSummaryTenantChanged(tenant: Tenant): void {
+        this.summarySelectedTenant = tenant;
+        // Update available use cases when tenant changes
         this.availableUseCases = tenant.useCases;
-        this.selectedUseCase = null; // Reset use case selection
-        this.loadHealthData();
+        this.summarySelectedUseCase = null; // Reset use case selection
+        this.loadSummaryData();
     }
 
-    onUseCaseChanged(useCase: UseCase): void {
-        this.selectedUseCase = useCase;
-        this.loadHealthData();
+    onSummaryUseCaseChanged(useCase: UseCase): void {
+        this.summarySelectedUseCase = useCase;
+        this.loadSummaryData();
     }
 
-    onRefreshClicked(): void {
-        this.loadHealthData(true);
-        this.showInfoSnackbar('Health dashboard refreshed.');
+    onSummaryRefreshClicked(): void {
+        this.loadSummaryData(true);
+        this.showInfoSnackbar('Summary data refreshed.');
     }
 
-    onHelpClicked(): void {
+    onSummaryHelpClicked(): void {
+        // This is handled by the filter bar component itself
+    }
+
+    // Handler for CHARTS filter-bar events
+    onChartsDateRangeChanged(option: any): void {
+        this.chartsSelectedDateRange = option.label;
+        this.loadChartsData();
+    }
+
+    onChartsTenantChanged(tenant: Tenant): void {
+        this.chartsSelectedTenant = tenant;
+        // Update available use cases when tenant changes
+        this.availableUseCases = tenant.useCases;
+        this.chartsSelectedUseCase = null; // Reset use case selection
+        this.loadChartsData();
+    }
+
+    onChartsUseCaseChanged(useCase: UseCase): void {
+        this.chartsSelectedUseCase = useCase;
+        this.loadChartsData();
+    }
+
+    onChartsRefreshClicked(): void {
+        this.loadChartsData(true);
+        this.showInfoSnackbar('Charts data refreshed.');
+    }
+
+    onChartsHelpClicked(): void {
         // This is handled by the filter bar component itself
     }
 
