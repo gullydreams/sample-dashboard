@@ -84,6 +84,29 @@ export interface DateRangeOption {
           {{ useCase.name }}
         </button>
       </mat-menu>
+
+      <!-- Account Type filter (only shown when showAccountTypeFilter is true) -->
+      <div class="divider" *ngIf="showAccountTypeFilter"></div>
+      <button class="filter-item account-type-filter" [matMenuTriggerFor]="accountTypeMenu"
+              *ngIf="showAccountTypeFilter" [disabled]="!accountTypes || accountTypes.length === 0">
+        <mat-icon class="filter-icon">account_balance</mat-icon>
+        <span class="filter-label">Account:</span>
+        <span class="filter-value">{{ selectedAccountType || 'All' }}</span>
+        <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #accountTypeMenu="matMenu" class="filter-menu">
+        <button mat-menu-item (click)="selectAccountType('All')"
+                [class.selected-item]="!selectedAccountType || selectedAccountType === 'All'">
+          <mat-icon class="menu-icon">view_module</mat-icon>
+          All
+        </button>
+        <button mat-menu-item *ngFor="let accountType of accountTypes" 
+                (click)="selectAccountType(accountType)"
+                [class.selected-item]="selectedAccountType === accountType">
+          <mat-icon class="menu-icon">{{ getAccountTypeIcon(accountType) }}</mat-icon>
+          {{ accountType }}
+        </button>
+      </mat-menu>
       
       <div class="spacer"></div>
       
@@ -127,6 +150,15 @@ export interface DateRangeOption {
               <li><strong>All</strong> - View all transaction types</li>
               <li><strong>One time</strong> - Single transactions</li>
               <li><strong>Recurring</strong> - Scheduled recurring payments</li>
+            </ul>
+          </div>
+
+          <div class="help-section" *ngIf="showAccountTypeFilter">
+            <h4><mat-icon>account_balance</mat-icon> Account Types</h4>
+            <p>Filter by account payment method:</p>
+            <ul>
+              <li><strong>ACH</strong> - Automated Clearing House transfers</li>
+              <li><strong>Debit</strong> - Debit card transactions</li>
             </ul>
           </div>
           
@@ -399,10 +431,14 @@ export class HealthFilterBarComponent {
   @Input() useCases: UseCase[] = [];
   @Input() isRefreshing: boolean = false;
   @Input() showAllTenantsOption: boolean = true;
+  @Input() showAccountTypeFilter: boolean = false;
+  @Input() selectedAccountType: string = '';
+  @Input() accountTypes: string[] = [];
 
   @Output() dateRangeChanged = new EventEmitter<DateRangeOption>();
   @Output() tenantChanged = new EventEmitter<Tenant | null>();
   @Output() useCaseChanged = new EventEmitter<UseCase | null>();
+  @Output() accountTypeChanged = new EventEmitter<string>();
   @Output() refreshClicked = new EventEmitter<void>();
   @Output() helpClicked = new EventEmitter<void>();
 
@@ -443,6 +479,11 @@ export class HealthFilterBarComponent {
     }
   }
 
+  selectAccountType(accountType: string): void {
+    this.selectedAccountType = accountType;
+    this.accountTypeChanged.emit(accountType);
+  }
+
   refresh(): void {
     this.refreshClicked.emit();
   }
@@ -469,5 +510,13 @@ export class HealthFilterBarComponent {
       'Recurring': 'repeat'
     };
     return iconMap[useCaseName] || 'category';
+  }
+
+  getAccountTypeIcon(accountType: string): string {
+    const iconMap: { [key: string]: string } = {
+      'ACH': 'account_balance',
+      'Debit': 'payment'
+    };
+    return iconMap[accountType] || 'account_balance';
   }
 }

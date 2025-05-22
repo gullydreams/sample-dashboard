@@ -4,6 +4,9 @@ import { CommonModule } from '@angular/common';
 import { TenantDataService, Tenant, UseCase } from '../../../../core/services/tenant-data.service';
 import { GooglePieChartComponent } from '../../../../shared/components/charts/google-pie-chart/google-pie-chart.component';
 import { HealthFilterBarComponent } from '../../../../shared/components/filters/health-filter-bar/health-filter-bar.component';
+import { BddScenarioDetailsComponent } from '../../../../shared/components/bdd/bdd-scenario-details/bdd-scenario-details.component';
+import { BddDataService } from '../../../../core/services/bdd-data.service';
+import { BddScenario, BddFilters, BddSummary } from '../../../../core/models/bdd-models';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
@@ -29,7 +32,8 @@ interface TenantSummary {
     MatIconModule,
     MatSnackBarModule,
     GooglePieChartComponent,
-    HealthFilterBarComponent
+    HealthFilterBarComponent,
+    BddScenarioDetailsComponent
   ],
   templateUrl: './health-dashboard.component.html',
   styleUrls: ['./health-dashboard.component.scss']
@@ -45,9 +49,16 @@ export class HealthDashboardComponent implements OnInit {
   chartsSelectedTenant: Tenant | null = null;
   chartsSelectedUseCase: UseCase | null = null;
 
-  // Available tenants and use cases
+  // Filter state for BDD SCENARIOS
+  bddSelectedDateRange: string = 'Last 7 days';
+  bddSelectedTenant: Tenant | null = null;
+  bddSelectedUseCase: UseCase | null = null;
+  bddSelectedAccountType: string = 'All';
+
+  // Available tenants, use cases, and account types
   availableTenants: Tenant[] = [];
   availableUseCases: UseCase[] = [];
+  availableAccountTypes: string[] = ['ACH', 'Debit'];
 
   // Loading and error states
   isLoading = true;
@@ -61,8 +72,14 @@ export class HealthDashboardComponent implements OnInit {
   // Tenant summary data for overview cards
   tenantSummaryData: TenantSummary[] = [];
 
+  // BDD Scenarios data
+  bddScenarios: BddScenario[] = [];
+  bddSummary: BddSummary | null = null;
+  bddLoading = false;
+
   constructor(
     private tenantDataService: TenantDataService,
+    private bddDataService: BddDataService,
     private snackBar: MatSnackBar
   ) { }
 
@@ -83,6 +100,11 @@ export class HealthDashboardComponent implements OnInit {
           this.availableUseCases = defaultTenant.useCases;
           const defaultUseCase = defaultTenant.useCases.find(uc => uc.id === 'all') || defaultTenant.useCases[0];
           this.chartsSelectedUseCase = defaultUseCase;
+
+          // BDD filters - start with same defaults as charts
+          this.bddSelectedTenant = defaultTenant;
+          this.bddSelectedUseCase = defaultUseCase;
+          this.bddSelectedAccountType = 'ACH'; // Default to ACH
 
           // SUMMARY starts with "All" for both tenant and use case (already set above)
           // Set available use cases to all possible use cases from all tenants
@@ -238,9 +260,49 @@ export class HealthDashboardComponent implements OnInit {
     ).subscribe({
       next: (data) => {
         this.prepareAccountChartGroups(data.accounts);
+        // Load BDD data when charts data loads (if BDD filters are set)
+        if (this.bddSelectedTenant) {
+          this.loadBddData(forceRefresh);
+        }
       },
       error: (error) => {
         this.handleError('Failed to load charts data.', error);
+      }
+    });
+  }
+
+  private loadBddData(forceRefresh: boolean = false): void {
+    if (!this.bddSelectedTenant) return;
+
+    this.bddLoading = true;
+
+    const filters: BddFilters = {
+      tenantId: this.bddSelectedTenant.id,
+      useCaseId: this.bddSelectedUseCase?.id,
+      accountType: this.bddSelectedAccountType === 'All' ? undefined : this.bddSelectedAccountType,
+      dateRange: this.bddSelectedDateRange
+    };
+
+    // Load BDD scenarios
+    this.bddDataService.getBddScenarios(filters, forceRefresh).subscribe({
+      next: (scenarios) => {
+        this.bddScenarios = scenarios;
+      },
+      error: (error) => {
+        this.handleError('Failed to load BDD scenarios.', error);
+      },
+      complete: () => {
+        this.bddLoading = false;
+      }
+    });
+
+    // Load BDD summary
+    this.bddDataService.getBddSummary(filters, forceRefresh).subscribe({
+      next: (summary) => {
+        this.bddSummary = summary;
+      },
+      error: (error) => {
+        this.handleError('Failed to load BDD summary.', error);
       }
     });
   }
@@ -334,6 +396,62 @@ export class HealthDashboardComponent implements OnInit {
 
   onChartsHelpClicked(): void {
     // This is handled by the filter bar component itself
+  }
+
+  // Handler for BDD filter-bar events
+  onBddDateRangeChanged(option: any): void {
+    this.bddSelectedDateRange = option.label;
+    this.loadBddData();
+  }
+
+  onBddTenantChanged(tenant: Tenant | null): void {
+    if (tenant) {
+      this.bddSelectedTenant = tenant;
+      this.bddSelectedUseCase = null; // Reset use case when tenant changes
+      this.availableUseCases = tenant.useCases;
+      this.loadBddData();
+    }
+  }
+
+  onBddUseCaseChanged(useCase: UseCase | null): void {
+    this.bddSelectedUseCase = useCase;
+    this.loadBddData();
+  }
+
+  onBddAccountTypeChanged(accountType: string): void {
+    this.bddSelectedAccountType = accountType;
+    this.loadBddData();
+  }
+
+  onBddRefreshClicked(): void {
+    this.loadBddData(true);
+    this.showInfoSnackbar('Test scenarios refreshed.');
+  }
+
+  onBddHelpClicked(): void {
+    // Handle help for BDD section
+  }
+
+  // BDD event handlers
+  onScenarioRerun(scenario: BddScenario): void {
+    console.log('Re-running scenario:', scenario.name);
+    this.showInfoSnackbar(`Re-running scenario: ${scenario.name}`);
+    // In a real app, this would trigger a test re-run
+  }
+
+  onCopyError(scenario: BddScenario): void {
+    const failedStep = scenario.steps.find(step => step.status === 'failed');
+    if (failedStep) {
+      const errorText = `Scenario: ${scenario.name}\nStep: ${failedStep.text}\nError: ${failedStep.errorMessage}`;
+      navigator.clipboard.writeText(errorText);
+      this.showInfoSnackbar('Error details copied to clipboard');
+    }
+  }
+
+  onViewScreenshots(scenario: BddScenario): void {
+    console.log('Viewing screenshots for scenario:', scenario.name);
+    this.showInfoSnackbar(`Screenshots for: ${scenario.name}`);
+    // In a real app, this would open a screenshots viewer
   }
 
   // Rest of existing methods...
@@ -463,5 +581,14 @@ export class HealthDashboardComponent implements OnInit {
     this.snackBar.open(message, 'Dismiss', {
       duration: 3000
     });
+  }
+
+  // Track by functions for templates
+  trackByScenarioId(index: number, scenario: BddScenario): string {
+    return scenario.id;
+  }
+
+  trackByStepId(index: number, step: any): string {
+    return step.id;
   }
 }

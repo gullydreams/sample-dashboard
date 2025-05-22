@@ -159,4 +159,31 @@
             <p class="no-data-hint">Select a tenant and use case to view health metrics.</p>
         </div>
     </div>
+
+    <!-- BDD Scenarios Section -->
+    <div class="bdd-scenarios-section" *ngIf="!isLoading">
+        <div class="section-header">
+            <h2>Test Scenarios Details</h2>
+            <div class="section-subtitle">
+                Detailed BDD scenario results for {{ bddSelectedTenant?.name || 'All' }} - {{ bddSelectedUseCase?.name
+                || 'All' }}
+            </div>
+        </div>
+
+        <!-- BDD Scenarios Filter Bar -->
+        <app-health-filter-bar [filterLabel]="'Test Scenarios Report For :'" [selectedDateRange]="bddSelectedDateRange"
+            [selectedTenantName]="bddSelectedTenant?.name || ''" [selectedUseCaseName]="bddSelectedUseCase?.name || ''"
+            [tenants]="availableTenants" [useCases]="availableUseCases" [isRefreshing]="bddLoading"
+            [showAllTenantsOption]="false" [showAccountTypeFilter]="true" [selectedAccountType]="bddSelectedAccountType"
+            [accountTypes]="availableAccountTypes" (dateRangeChanged)="onBddDateRangeChanged($event)"
+            (tenantChanged)="onBddTenantChanged($event)" (useCaseChanged)="onBddUseCaseChanged($event)"
+            (accountTypeChanged)="onBddAccountTypeChanged($event)" (refreshClicked)="onBddRefreshClicked()"
+            (helpClicked)="onBddHelpClicked()">
+        </app-health-filter-bar>
+
+        <app-bdd-scenario-details [scenarios]="bddScenarios" [loading]="bddLoading" [summary]="bddSummary"
+            (scenarioRerun)="onScenarioRerun($event)" (copyError)="onCopyError($event)"
+            (viewScreenshots)="onViewScreenshots($event)">
+        </app-bdd-scenario-details>
+    </div>
 </div>

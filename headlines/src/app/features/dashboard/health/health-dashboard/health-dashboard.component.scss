@@ -563,6 +563,52 @@
     }
 }
 
+/* BDD Scenarios Section */
+.bdd-scenarios-section {
+    margin-top: 32px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+
+    .section-header {
+        padding: 20px 24px 16px;
+        border-bottom: 1px solid #e0e0e0;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0 0 8px 0;
+            display: flex;
+            align-items: center;
+
+            &::before {
+                content: '';
+                width: 4px;
+                height: 24px;
+                background-color: var(--primary-color);
+                margin-right: 12px;
+                border-radius: 2px;
+            }
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 0;
+            font-weight: 500;
+            padding-left: 16px;
+        }
+    }
+
+    app-bdd-scenario-details {
+        display: block;
+        padding: 0;
+    }
+}
+
 /* No data message */
 .no-data-message {
     display: flex;
@@ -676,6 +722,30 @@
         height: 240px;
         padding: 12px;
     }
+
+    /* BDD section responsive */
+    .bdd-scenarios-section {
+        margin-top: 20px;
+
+        .section-header {
+            padding: 16px 20px 12px;
+
+            h2 {
+                font-size: 18px;
+
+                &::before {
+                    height: 20px;
+                    width: 3px;
+                    margin-right: 10px;
+                }
+            }
+
+            .section-subtitle {
+                font-size: 13px;
+                padding-left: 13px;
+            }
+        }
+    }
 }
 
 @media (max-width: 576px) {
@@ -728,5 +798,17 @@
     .chart-content {
         height: 220px;
         padding: 8px;
+    }
+
+    .bdd-scenarios-section {
+        .section-header {
+            h2 {
+                font-size: 16px;
+            }
+
+            .section-subtitle {
+                font-size: 12px;
+            }
+        }
     }
 }
