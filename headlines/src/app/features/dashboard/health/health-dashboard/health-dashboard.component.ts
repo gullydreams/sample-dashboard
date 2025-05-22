@@ -58,7 +58,7 @@ export class HealthDashboardComponent implements OnInit {
   // Account charts data grouped by use case
   accountChartGroups: any[] = [];
 
-  // NEW: Tenant summary data for overview cards
+  // Tenant summary data for overview cards
   tenantSummaryData: TenantSummary[] = [];
 
   constructor(
@@ -187,6 +187,7 @@ export class HealthDashboardComponent implements OnInit {
       }
     });
   }
+
   private formatTenantSummary(tenant: Tenant, data: any): TenantSummary {
     const accounts = data.accounts || {};
 
@@ -244,7 +245,7 @@ export class HealthDashboardComponent implements OnInit {
     });
   }
 
-  // NEW: Handle tenant card clicks
+  // Handle tenant card clicks
   onTenantCardClick(tenant: TenantSummary): void {
     // Auto-select in charts filter
     const tenantObj = this.availableTenants.find(t => t.id === tenant.id);
@@ -256,7 +257,7 @@ export class HealthDashboardComponent implements OnInit {
     }
   }
 
-  // NEW: Get score color class
+  // Get score color class
   getScoreClass(score: number): string {
     if (score >= 80) return 'score-excellent';
     if (score >= 70) return 'score-good';
@@ -264,7 +265,7 @@ export class HealthDashboardComponent implements OnInit {
     return 'score-poor';
   }
 
-  // NEW: Track by function for tenant cards
+  // Track by function for tenant cards
   trackByTenantId(index: number, tenant: TenantSummary): string {
     return tenant.id;
   }
@@ -291,16 +292,7 @@ export class HealthDashboardComponent implements OnInit {
     this.loadSummaryData();
   }
 
-  onChartsTenantChanged(tenant: Tenant | null): void {
-    if (tenant) {
-      this.chartsSelectedTenant = tenant;
-      this.availableUseCases = tenant.useCases;
-      this.chartsSelectedUseCase = null;
-      this.loadChartsData();
-    }
-    // If null is passed (shouldn't happen for charts), ignore it
-  }
-  onSummaryUseCaseChanged(useCase: UseCase): void {
+  onSummaryUseCaseChanged(useCase: UseCase | null): void {
     this.summarySelectedUseCase = useCase;
     this.loadSummaryData();
   }
@@ -314,14 +306,23 @@ export class HealthDashboardComponent implements OnInit {
     // This is handled by the filter bar component itself
   }
 
-  // Handler for CHARTS filter-bar events (unchanged)
+  // Handler for CHARTS filter-bar events
   onChartsDateRangeChanged(option: any): void {
     this.chartsSelectedDateRange = option.label;
     this.loadChartsData();
   }
 
+  onChartsTenantChanged(tenant: Tenant | null): void {
+    if (tenant) {
+      this.chartsSelectedTenant = tenant;
+      this.availableUseCases = tenant.useCases;
+      this.chartsSelectedUseCase = null;
+      this.loadChartsData();
+    }
+    // If null is passed (shouldn't happen for charts), ignore it
+  }
 
-  onChartsUseCaseChanged(useCase: UseCase): void {
+  onChartsUseCaseChanged(useCase: UseCase | null): void {
     this.chartsSelectedUseCase = useCase;
     this.loadChartsData();
   }

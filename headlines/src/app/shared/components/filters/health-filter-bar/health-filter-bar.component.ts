@@ -72,17 +72,20 @@ export interface DateRangeOption {
         <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
       </button>
       <mat-menu #useCaseMenu="matMenu" class="filter-menu">
-        <button mat-menu-item (click)="selectUenantTused(null)"
+        <button mat-menu-item (click)="selectUseCase(null)"
                 [class.selected-item]="!selectedUseCaseName || selectedUseCaseName === 'All'">
           <mat-icon class="menu-icon">view_module</mat-icon>
           All
         </button>
-<button mat-menu-item (click)="selectUseCase(null)"
-        [class.selected-item]="!selectedUseCaseName || selectedUseCaseName === 'All'">
+        <button mat-menu-item *ngFor="let useCase of useCases" 
+                (click)="selectUseCase(useCase)"
+                [class.selected-item]="selectedUseCaseName === useCase.name">
           <mat-icon class="menu-icon">{{ getUseCaseIcon(useCase.name) }}</mat-icon>
           {{ useCase.name }}
         </button>
       </mat-menu>
+      
+      <div class="spacer"></div>
       
       <!-- Refresh button -->
       <button class="refresh-button" (click)="refresh()" [disabled]="isRefreshing" 
@@ -388,7 +391,7 @@ export interface DateRangeOption {
   `]
 })
 export class HealthFilterBarComponent {
-  @Input() filterLabel: string = 'Health Report For :'; // New input for the label
+  @Input() filterLabel: string = 'Health Report For :';
   @Input() selectedDateRange: string = 'Last 7 days';
   @Input() selectedTenantName: string = '';
   @Input() selectedUseCaseName: string = '';
@@ -398,8 +401,8 @@ export class HealthFilterBarComponent {
   @Input() showAllTenantsOption: boolean = true;
 
   @Output() dateRangeChanged = new EventEmitter<DateRangeOption>();
-  @Output() tenantChanged = new EventEmitter<Tenant>();
-  @Output() useCaseChanged = new EventEmitter<UseCase>();
+  @Output() tenantChanged = new EventEmitter<Tenant | null>();
+  @Output() useCaseChanged = new EventEmitter<UseCase | null>();
   @Output() refreshClicked = new EventEmitter<void>();
   @Output() helpClicked = new EventEmitter<void>();
 
@@ -423,8 +426,7 @@ export class HealthFilterBarComponent {
   selectTenant(tenant: Tenant | null): void {
     if (tenant === null) {
       this.selectedTenantName = this.showAllTenantsOption ? 'All Tenants' : '';
-      // Emit a special "all tenants" signal - we'll handle this in the dashboard
-      this.tenantChanged.emit(null as any);
+      this.tenantChanged.emit(null);
     } else {
       this.selectedTenantName = tenant.name;
       this.tenantChanged.emit(tenant);
@@ -434,7 +436,7 @@ export class HealthFilterBarComponent {
   selectUseCase(useCase: UseCase | null): void {
     if (useCase === null) {
       this.selectedUseCaseName = 'All';
-      this.useCaseChanged.emit(null as any); // Emit null to indicate "All"
+      this.useCaseChanged.emit(null);
     } else {
       this.selectedUseCaseName = useCase.name;
       this.useCaseChanged.emit(useCase);
