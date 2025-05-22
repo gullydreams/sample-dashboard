@@ -351,4 +351,20 @@ export class HealthDashboardComponent implements OnInit {
             duration: 3000
         });
     }
+    onExportData(): void {
+        console.log('Exporting health data...');
+        this.showInfoSnackbar('Data export initiated.');
+    }
+
+    onOpenSettings(): void {
+        console.log('Opening settings...');
+        this.showInfoSnackbar('Settings opened.');
+    }
+
+    onToggleFullScreen(): void {
+        console.log('Toggling full screen...');
+        this.showInfoSnackbar('Full screen toggled.');
+    }
+
+
 }

@@ -13,6 +13,7 @@ import { filter } from 'rxjs/operators';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
+
 export class HeaderComponent implements OnInit {
   headerTitle: string = 'Dashboard';
 
@@ -20,16 +21,14 @@ export class HeaderComponent implements OnInit {
     '/dashboard/test-case': 'Test Case Dashboard',
     '/dashboard/model': 'Model Dashboard',
     '/dashboard/exploratory': 'Exploratory Dashboard',
-    '/dashboard/health': 'Health View'
+    '/dashboard/health': '' // Remove the title for health view
   };
 
   constructor(private router: Router) { }
 
   ngOnInit(): void {
-    // Set initial title
     this.updateTitle(this.router.url);
 
-    // Listen for route changes
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

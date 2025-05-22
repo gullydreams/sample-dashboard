@@ -1,5 +1,23 @@
 <!-- src/app/features/dashboard/health/health-dashboard/health-dashboard.component.html -->
 <div class="dashboard-container">
+    <!-- Page Title Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            Health View
+        </h1>
+        <div class="page-actions">
+            <button class="action-button" matTooltip="Export Data" (click)="onExportData()">
+                <mat-icon>download</mat-icon>
+            </button>
+            <button class="action-button" matTooltip="Settings" (click)="onOpenSettings()">
+                <mat-icon>settings</mat-icon>
+            </button>
+            <button class="action-button" matTooltip="Full Screen" (click)="onToggleFullScreen()">
+                <mat-icon>fullscreen</mat-icon>
+            </button>
+        </div>
+    </div>
+
     <!-- Error Banner -->
     <div class="error-banner" *ngIf="hasError">
         <mat-icon>error</mat-icon>
