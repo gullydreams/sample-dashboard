@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TenantDataService, Tenant, UseCase } from '../../../../core/services/tenant-data.service';
 import { MetricCardComponent } from '../../../../shared/components/cards/metric-card/metric-card.component';
-import { DonutChartComponent } from '../../../../shared/components/charts/donut-chart/donut-chart.component';
+import { GooglePieChartComponent } from '../../../../shared/components/charts/google-pie-chart/google-pie-chart.component';
 import { HealthFilterBarComponent } from '../../../../shared/components/filters/health-filter-bar/health-filter-bar.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -16,7 +16,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
         MatIconModule,
         MatSnackBarModule,
         MetricCardComponent,
-        DonutChartComponent,
+        GooglePieChartComponent, // Use Google Charts instead of DonutChartComponent
         HealthFilterBarComponent
     ],
     templateUrl: './health-dashboard.component.html',
@@ -251,6 +251,20 @@ export class HealthDashboardComponent implements OnInit {
 
     trackByGroupTitle(index: number, group: any): string {
         return group.useCaseTitle;
+    }
+
+    // Add the missing legend helper methods
+    getSharedLegendLabels(): string[] {
+        return ['Passed', 'Failed', 'Error', 'Cancelled'];
+    }
+
+    getSharedLegendColors(): string[] {
+        return [
+            '#4CAF50', // Green for passed
+            '#F44336', // Red for failed
+            '#FF9800', // Orange for error
+            '#9E9E9E'  // Grey for cancelled
+        ];
     }
 
     private resetErrors(): void {
