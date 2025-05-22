@@ -1,4 +1,5 @@
 /* src/app/features/dashboard/health/health-dashboard/health-dashboard.component.scss */
+
 .dashboard-container {
     padding: 20px;
     background-color: var(--background-color);
@@ -163,23 +164,211 @@
     }
 }
 
-/* Summary bar styling */
-.summary-bar {
-    display: flex;
-    gap: 16px;
+/* TENANT OVERVIEW SECTION - FIXED LAYOUT */
+.tenant-overview-section {
     margin-bottom: 32px;
-    flex-wrap: wrap;
-    position: relative;
-    z-index: 5;
-    background-color: var(--background-color);
-    padding-bottom: 16px;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
 
-    app-metric-card {
-        flex: 1;
-        min-width: 200px;
-        height: 110px;
-        position: relative;
-        z-index: 6;
+    .section-header {
+        margin-bottom: 20px;
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0;
+            display: flex;
+            align-items: center;
+
+            &::before {
+                content: '';
+                width: 4px;
+                height: 24px;
+                background-color: var(--primary-color);
+                margin-right: 12px;
+                border-radius: 2px;
+            }
+        }
+    }
+}
+
+/* FIXED: Proper 4-column grid layout */
+.tenant-cards-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+
+    /* Ensure equal height cards */
+    align-items: stretch;
+}
+
+.tenant-card {
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    border-left: 4px solid var(--primary-color);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: var(--primary-color);
+    }
+
+    &.selected {
+        border-left-color: var(--success-color);
+        background-color: rgba(76, 175, 80, 0.05);
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
+    }
+}
+
+.tenant-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .tenant-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .overall-score {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 4px 8px;
+        border-radius: 12px;
+        min-width: 50px;
+        text-align: center;
+
+        &.score-excellent {
+            background-color: rgba(76, 175, 80, 0.15);
+            color: #2E7D32;
+        }
+
+        &.score-good {
+            background-color: rgba(139, 195, 74, 0.15);
+            color: #558B2F;
+        }
+
+        &.score-fair {
+            background-color: rgba(255, 152, 0, 0.15);
+            color: #EF6C00;
+        }
+
+        &.score-poor {
+            background-color: rgba(244, 67, 54, 0.15);
+            color: #C62828;
+        }
+    }
+}
+
+.use-cases-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.use-case-item {
+    border-radius: 6px;
+    background-color: white;
+    padding: 12px;
+    border: 1px solid #e8e8e8;
+}
+
+.use-case-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .use-case-name {
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 14px;
+    }
+
+    .use-case-score {
+        font-weight: 600;
+        font-size: 14px;
+        padding: 2px 6px;
+        border-radius: 8px;
+
+        &.score-excellent {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #2E7D32;
+        }
+
+        &.score-good {
+            background-color: rgba(139, 195, 74, 0.1);
+            color: #558B2F;
+        }
+
+        &.score-fair {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #EF6C00;
+        }
+
+        &.score-poor {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #C62828;
+        }
+    }
+}
+
+.accounts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+.account-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    padding: 2px 4px;
+
+    .account-name {
+        color: var(--text-secondary);
+        font-weight: 400;
+    }
+
+    .account-score {
+        font-weight: 600;
+        padding: 1px 4px;
+        border-radius: 4px;
+
+        &.score-excellent {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #2E7D32;
+        }
+
+        &.score-good {
+            background-color: rgba(139, 195, 74, 0.1);
+            color: #558B2F;
+        }
+
+        &.score-fair {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #EF6C00;
+        }
+
+        &.score-poor {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #C62828;
+        }
     }
 }
 
@@ -412,6 +601,11 @@
 
 /* Responsive adjustments */
 @media (max-width: 1400px) {
+    .tenant-cards-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
     .use-case-groups {
         flex-direction: column;
     }
@@ -422,15 +616,6 @@
 }
 
 @media (max-width: 1200px) {
-    .summary-bar {
-        margin-bottom: 24px;
-
-        app-metric-card {
-            flex: 1 1 calc(33.333% - 16px);
-            min-width: 180px;
-        }
-    }
-
     .charts-row {
         flex-direction: column;
     }
@@ -461,13 +646,14 @@
         }
     }
 
-    .summary-bar {
-        margin-bottom: 20px;
+    .tenant-cards-container {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
 
-        app-metric-card {
-            flex: 1 1 calc(50% - 16px);
-            min-width: 160px;
-        }
+    .tenant-card {
+        padding: 12px;
+        min-height: auto;
     }
 
     .group-header {
@@ -527,17 +713,6 @@
                     height: 18px;
                 }
             }
-        }
-    }
-
-    .summary-bar {
-        flex-direction: column;
-        margin-bottom: 16px;
-
-        app-metric-card {
-            width: 100%;
-            min-width: auto;
-            height: 100px;
         }
     }
 

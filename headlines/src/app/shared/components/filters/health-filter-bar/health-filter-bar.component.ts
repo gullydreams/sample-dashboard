@@ -7,17 +7,17 @@ import { MatButtonModule } from '@angular/material/button';
 import { Tenant, UseCase } from '../../../../core/services/tenant-data.service';
 
 export interface DateRangeOption {
-    label: string;
-    value: string;
-    days?: number;
-    custom?: boolean;
+  label: string;
+  value: string;
+  days?: number;
+  custom?: boolean;
 }
 
 @Component({
-    selector: 'app-health-filter-bar',
-    standalone: true,
-    imports: [CommonModule, MatIconModule, MatMenuModule, MatButtonModule],
-    template: `
+  selector: 'app-health-filter-bar',
+  standalone: true,
+  imports: [CommonModule, MatIconModule, MatMenuModule, MatButtonModule],
+  template: `
     <div class="filter-bar">
       <!-- Filter Label -->
       <div class="filter-label-section">
@@ -49,6 +49,12 @@ export interface DateRangeOption {
         <mat-icon class="dropdown-icon">arrow_drop_down</mat-icon>
       </button>
       <mat-menu #tenantMenu="matMenu" class="filter-menu">
+        <button mat-menu-item *ngIf="showAllTenantsOption" 
+                (click)="selectTenant(null)"
+                [class.selected-item]="selectedTenantName === 'All Tenants'">
+          <mat-icon class="menu-icon">view_module</mat-icon>
+          All Tenants
+        </button>
         <button mat-menu-item *ngFor="let tenant of tenants" 
                 (click)="selectTenant(tenant)"
                 [class.selected-item]="selectedTenantName === tenant.name">
@@ -127,7 +133,7 @@ export interface DateRangeOption {
       </div>
     </div>
   `,
-    styles: [`
+  styles: [`
     .filter-bar {
       display: flex;
       align-items: center;
@@ -380,72 +386,79 @@ export interface DateRangeOption {
   `]
 })
 export class HealthFilterBarComponent {
-    @Input() filterLabel: string = 'Health Report For :'; // New input for the label
-    @Input() selectedDateRange: string = 'Last 7 days';
-    @Input() selectedTenantName: string = '';
-    @Input() selectedUseCaseName: string = '';
-    @Input() tenants: Tenant[] = [];
-    @Input() useCases: UseCase[] = [];
-    @Input() isRefreshing: boolean = false;
+  @Input() filterLabel: string = 'Health Report For :'; // New input for the label
+  @Input() selectedDateRange: string = 'Last 7 days';
+  @Input() selectedTenantName: string = '';
+  @Input() selectedUseCaseName: string = '';
+  @Input() tenants: Tenant[] = [];
+  @Input() useCases: UseCase[] = [];
+  @Input() isRefreshing: boolean = false;
+  @Input() showAllTenantsOption: boolean = true;
 
-    @Output() dateRangeChanged = new EventEmitter<DateRangeOption>();
-    @Output() tenantChanged = new EventEmitter<Tenant>();
-    @Output() useCaseChanged = new EventEmitter<UseCase>();
-    @Output() refreshClicked = new EventEmitter<void>();
-    @Output() helpClicked = new EventEmitter<void>();
+  @Output() dateRangeChanged = new EventEmitter<DateRangeOption>();
+  @Output() tenantChanged = new EventEmitter<Tenant>();
+  @Output() useCaseChanged = new EventEmitter<UseCase>();
+  @Output() refreshClicked = new EventEmitter<void>();
+  @Output() helpClicked = new EventEmitter<void>();
 
-    showHelp: boolean = false;
+  showHelp: boolean = false;
 
-    dateRangeOptions: DateRangeOption[] = [
-        { label: 'Today', value: 'today', days: 1 },
-        { label: 'Yesterday', value: 'yesterday', days: 1 },
-        { label: 'Last 3 days', value: 'last-3-days', days: 3 },
-        { label: 'Last 7 days', value: 'last-7-days', days: 7 },
-        { label: 'Last 2 weeks', value: 'last-2-weeks', days: 14 },
-        { label: 'Last month', value: 'last-month', days: 30 },
-        { label: 'Custom range', value: 'custom', custom: true }
-    ];
+  dateRangeOptions: DateRangeOption[] = [
+    { label: 'Today', value: 'today', days: 1 },
+    { label: 'Yesterday', value: 'yesterday', days: 1 },
+    { label: 'Last 3 days', value: 'last-3-days', days: 3 },
+    { label: 'Last 7 days', value: 'last-7-days', days: 7 },
+    { label: 'Last 2 weeks', value: 'last-2-weeks', days: 14 },
+    { label: 'Last month', value: 'last-month', days: 30 },
+    { label: 'Custom range', value: 'custom', custom: true }
+  ];
 
-    selectDateRange(option: DateRangeOption): void {
-        this.selectedDateRange = option.label;
-        this.dateRangeChanged.emit(option);
+  selectDateRange(option: DateRangeOption): void {
+    this.selectedDateRange = option.label;
+    this.dateRangeChanged.emit(option);
+  }
+
+  selectTenant(tenant: Tenant | null): void {
+    if (tenant === null) {
+      this.selectedTenantName = this.showAllTenantsOption ? 'All Tenants' : '';
+      // Emit a special "all tenants" signal - we'll handle this in the dashboard
+      this.tenantChanged.emit(null as any);
+    } else {
+      this.selectedTenantName = tenant.name;
+      this.tenantChanged.emit(tenant);
     }
+  }
 
-    selectTenant(tenant: Tenant): void {
-        this.selectedTenantName = tenant.name;
-        this.tenantChanged.emit(tenant);
-    }
+  selectUseCase(useCase: UseCase): void {
+    this.selectedUseCaseName = useCase.name;
+    this.useCaseChanged.emit(useCase);
+  }
 
-    selectUseCase(useCase: UseCase): void {
-        this.selectedUseCaseName = useCase.name;
-        this.useCaseChanged.emit(useCase);
-    }
+  refresh(): void {
+    this.refreshClicked.emit();
+  }
 
-    refresh(): void {
-        this.refreshClicked.emit();
-    }
+  toggleHelp(): void {
+    this.showHelp = !this.showHelp;
+    this.helpClicked.emit();
+  }
 
-    toggleHelp(): void {
-        this.showHelp = !this.showHelp;
-        this.helpClicked.emit();
-    }
+  getMenuIcon(tenantName: string): string {
+    const iconMap: { [key: string]: string } = {
+      'Recoveries': 'assignment_return',
+      'Card': 'credit_card',
+      'COAF': 'support_agent',
+      'Secured Card': 'security'
+    };
+    return iconMap[tenantName] || 'business';
+  }
 
-    getMenuIcon(tenantName: string): string {
-        const iconMap: { [key: string]: string } = {
-            'Recoveries': 'assignment_return',
-            'Card': 'credit_card',
-            'COAF': 'support_agent',
-            'Secured Card': 'security'
-        };
-        return iconMap[tenantName] || 'business';
-    }
-
-    getUseCaseIcon(useCaseName: string): string {
-        const iconMap: { [key: string]: string } = {
-            'All': 'view_module',
-            'One time': 'payment',
-            'Recurring': 'repeat'
-        };
-        return iconMap[useCaseName] || 'category';
-    }
+  getUseCaseIcon(useCaseName: string): string {
+    const iconMap: { [key: string]: string } = {
+      'All': 'view_module',
+      'One time': 'payment',
+      'Recurring': 'repeat'
+    };
+    return iconMap[useCaseName] || 'category';
+  }
 }

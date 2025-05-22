@@ -3,6 +3,7 @@
     <!-- Page Title Header -->
     <div class="page-header">
         <h1 class="page-title">
+            <mat-icon class="page-icon">favorite</mat-icon>
             Health View
         </h1>
         <div class="page-actions">
@@ -29,7 +30,7 @@
     <app-health-filter-bar [filterLabel]="'Summary Report For :'" [selectedDateRange]="summarySelectedDateRange"
         [selectedTenantName]="summarySelectedTenant?.name || ''"
         [selectedUseCaseName]="summarySelectedUseCase?.name || ''" [tenants]="availableTenants"
-        [useCases]="availableUseCases" [isRefreshing]="isRefreshing"
+        [useCases]="availableUseCases" [isRefreshing]="isRefreshing" [showAllTenantsOption]="true"
         (dateRangeChanged)="onSummaryDateRangeChanged($event)" (tenantChanged)="onSummaryTenantChanged($event)"
         (useCaseChanged)="onSummaryUseCaseChanged($event)" (refreshClicked)="onSummaryRefreshClicked()"
         (helpClicked)="onSummaryHelpClicked()">
@@ -43,39 +44,72 @@
         </div>
     </div>
 
-    <!-- Summary metrics - horizontal layout -->
-    <div class="summary-bar" *ngIf="!isLoading">
-        <app-metric-card title="Health Score" [value]="summaryData.healthScore || 0" icon="favorite"
-            color="var(--primary-color)">
-        </app-metric-card>
+    <!-- TENANT OVERVIEW CARDS (Replaces old metric cards) -->
+    <div class="tenant-overview-section" *ngIf="!isLoading">
+        <div class="section-header">
+            <h2>Tenant Overview</h2>
+        </div>
+        <div class="tenant-cards-container">
+            <div class="tenant-card" *ngFor="let tenant of tenantSummaryData; trackBy: trackByTenantId"
+                [class.selected]="tenant.id === chartsSelectedTenant?.id" (click)="onTenantCardClick(tenant)">
 
-        <app-metric-card title="Pass Rate" [value]="summaryData.passRate || '0%'" [trend]="'up'" [trendValue]="'+2.3%'"
-            icon="check_circle" color="var(--success-color)">
-        </app-metric-card>
+                <div class="tenant-header">
+                    <div class="tenant-name">{{ tenant.name }}</div>
+                    <div class="overall-score" [ngClass]="getScoreClass(tenant.overall)">
+                        {{ tenant.overall }}%
+                    </div>
+                </div>
 
-        <app-metric-card title="Failure Rate" [value]="summaryData.failureRate || '0%'" [trend]="'down'"
-            [trendValue]="'-1.5%'" icon="error" color="var(--failure-color)">
-        </app-metric-card>
+                <div class="use-cases-breakdown">
+                    <div class="use-case-item">
+                        <div class="use-case-header">
+                            <span class="use-case-name">One Time</span>
+                            <span class="use-case-score" [ngClass]="getScoreClass(tenant.oneTime.overall)">
+                                {{ tenant.oneTime.overall }}%
+                            </span>
+                        </div>
+                        <div class="accounts-list">
+                            <div class="account-item" *ngFor="let account of tenant.oneTime.accounts">
+                                <span class="account-name">• {{ account.type }}</span>
+                                <span class="account-score" [ngClass]="getScoreClass(account.percentage)">
+                                    {{ account.percentage }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
 
-        <app-metric-card title="Availability" [value]="summaryData.availability || '0%'" [trend]="'up'"
-            [trendValue]="'+0.8%'" icon="cloud_done" color="var(--primary-color)">
-        </app-metric-card>
-
-        <app-metric-card title="Active Tests" [value]="summaryData.inProgress || 0" icon="hourglass_empty"
-            color="#2196F3">
-        </app-metric-card>
+                    <div class="use-case-item" *ngIf="tenant.recurring.accounts.length > 0">
+                        <div class="use-case-header">
+                            <span class="use-case-name">Recurring</span>
+                            <span class="use-case-score" [ngClass]="getScoreClass(tenant.recurring.overall)">
+                                {{ tenant.recurring.overall }}%
+                            </span>
+                        </div>
+                        <div class="accounts-list">
+                            <div class="account-item" *ngFor="let account of tenant.recurring.accounts">
+                                <span class="account-name">• {{ account.type }}</span>
+                                <span class="account-score" [ngClass]="getScoreClass(account.percentage)">
+                                    {{ account.percentage }}%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- CHARTS Health Filter Bar -->
     <app-health-filter-bar [filterLabel]="'Current Status Reports For :'" [selectedDateRange]="chartsSelectedDateRange"
         [selectedTenantName]="chartsSelectedTenant?.name || ''"
         [selectedUseCaseName]="chartsSelectedUseCase?.name || ''" [tenants]="availableTenants"
-        [useCases]="availableUseCases" [isRefreshing]="false" (dateRangeChanged)="onChartsDateRangeChanged($event)"
-        (tenantChanged)="onChartsTenantChanged($event)" (useCaseChanged)="onChartsUseCaseChanged($event)"
-        (refreshClicked)="onChartsRefreshClicked()" (helpClicked)="onChartsHelpClicked()">
+        [useCases]="availableUseCases" [isRefreshing]="false" [showAllTenantsOption]="false"
+        (dateRangeChanged)="onChartsDateRangeChanged($event)" (tenantChanged)="onChartsTenantChanged($event)"
+        (useCaseChanged)="onChartsUseCaseChanged($event)" (refreshClicked)="onChartsRefreshClicked()"
+        (helpClicked)="onChartsHelpClicked()">
     </app-health-filter-bar>
 
-    <!-- Account Pie Charts Grouped by Use Case - Using Google Charts -->
+    <!-- Account Pie Charts Grouped by Use Case -->
     <div class="dashboard-content" *ngIf="!isLoading">
         <div class="use-case-groups" *ngIf="accountChartGroups.length > 0">
             <div class="use-case-group" *ngFor="let group of accountChartGroups; trackBy: trackByGroupTitle">
@@ -97,7 +131,6 @@
                                     </div>
                                 </div>
                                 <div class="chart-content">
-                                    <!-- Use Google 3D Pie Chart -->
                                     <app-google-pie-chart [data]="chart.data" [labels]="chart.labels"
                                         [colors]="chart.colors" [showConnectors]="false">
                                     </app-google-pie-chart>
@@ -106,7 +139,6 @@
                         </div>
                     </div>
 
-                    <!-- Shared legend for the group -->
                     <div class="shared-legend">
                         <div class="legend-title">Status Legend</div>
                         <div class="legend-items">
