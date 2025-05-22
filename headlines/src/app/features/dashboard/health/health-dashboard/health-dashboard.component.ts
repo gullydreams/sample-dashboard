@@ -37,8 +37,8 @@ interface TenantSummary {
 export class HealthDashboardComponent implements OnInit {
   // Filter state for SUMMARY
   summarySelectedDateRange: string = 'Last 7 days';
-  summarySelectedTenant: Tenant | null = null;
-  summarySelectedUseCase: UseCase | null = null;
+  summarySelectedTenant: Tenant | null = null; // null means "All Tenants"
+  summarySelectedUseCase: UseCase | null = null; // null means "All"
 
   // Filter state for CHARTS
   chartsSelectedDateRange: string = 'Last 7 days';
@@ -84,10 +84,7 @@ export class HealthDashboardComponent implements OnInit {
           const defaultUseCase = defaultTenant.useCases.find(uc => uc.id === 'all') || defaultTenant.useCases[0];
           this.chartsSelectedUseCase = defaultUseCase;
 
-          // SUMMARY starts with "All" for both tenant and use case
-          this.summarySelectedTenant = null; // This means "All Tenants"
-          this.summarySelectedUseCase = null; // This means "All Use Cases"
-
+          // SUMMARY starts with "All" for both tenant and use case (already set above)
           // Set available use cases to all possible use cases from all tenants
           this.setAllAvailableUseCases();
 
