@@ -23,11 +23,13 @@ declare var google: any;
       width: 100%;
       height: 100%;
       min-height: 250px;
+      overflow: visible;
     }
     
     .chart-element {
       width: 100%;
       height: 100%;
+      overflow: visible;
     }
     
     .loading-indicator {
@@ -69,7 +71,9 @@ export class GooglePieChartComponent implements OnInit, OnChanges {
     @Input() showLegend: boolean = true;
     @Input() legendPosition: 'top' | 'bottom' | 'left' | 'right' | 'none' = 'bottom';
     @Input() backgroundColor: string = 'transparent';
-    @Input() pieSliceText: 'percentage' | 'value' | 'label' | 'none' = 'none';
+    @Input() pieSliceText: 'percentage' | 'value' | 'label' | 'none' = 'percentage';
+    @Input() showDataLabels: boolean = true;
+    @Input() showBothValueAndPercentage: boolean = false;
 
     private chart: any;
     isLoading = true;
@@ -125,10 +129,11 @@ export class GooglePieChartComponent implements OnInit, OnChanges {
         chartData.addColumn('string', 'Category');
         chartData.addColumn('number', 'Count');
 
+        const total = this.data.reduce((sum, val) => sum + val, 0);
         const rows = this.labels.map((label, index) => [label, this.data[index] || 0]);
         chartData.addRows(rows);
 
-        // Chart options
+        // Chart options - removed the problematic TableNumberFormat
         const options = {
             title: this.title || '',
             titleTextStyle: {
@@ -139,12 +144,16 @@ export class GooglePieChartComponent implements OnInit, OnChanges {
             },
             is3D: this.is3D,
             backgroundColor: this.backgroundColor,
-            pieSliceText: this.pieSliceText,
+
+            // Show percentage on slices
+            pieSliceText: this.showBothValueAndPercentage ? 'value-and-percentage' : this.pieSliceText,
             pieSliceTextStyle: {
-                fontSize: 12,
+                fontSize: 10,
                 color: '#fff',
-                bold: true
+                bold: true,
+                fontName: 'Roboto'
             },
+
             legend: {
                 position: this.showLegend ? this.legendPosition : 'none',
                 textStyle: {
@@ -154,52 +163,48 @@ export class GooglePieChartComponent implements OnInit, OnChanges {
                 },
                 alignment: 'center'
             },
+
             colors: this.colors.length > 0 ? this.colors : [
-                '#4CAF50', // Green for passed
-                '#F44336', // Red for failed
-                '#FF9800', // Orange for error
-                '#9E9E9E'  // Grey for cancelled
+                '#4CAF50', '#F44336', '#FF9800', '#9E9E9E'
             ],
-            pieHole: 0.0, // Full pie for 3D effect
-            sliceVisibilityThreshold: 0, // Show all slices
+
+            pieHole: 0.0,
+            sliceVisibilityThreshold: 0.01,
             pieStartAngle: 0,
+
             chartArea: {
                 left: 20,
                 top: this.title ? 40 : 20,
                 width: '90%',
-                height: this.showLegend && this.legendPosition === 'bottom' ? '70%' : '80%'
+                height: this.showLegend && this.legendPosition === 'bottom' ? '75%' : '80%'
             },
+
             width: '100%',
             height: '100%',
-            // 3D specific options
-            ...(this.is3D && {
-                pieSliceTextStyle: {
-                    fontSize: 12,
-                    color: '#fff',
-                    bold: true
-                },
-                slices: this.getSliceStyles()
-            }),
-            // Tooltip configuration
+
+            // Enhanced tooltip showing both value and percentage
             tooltip: {
+                text: 'both', // Shows both value and percentage
                 textStyle: {
                     fontSize: 13,
                     fontName: 'Roboto'
                 },
                 showColorCode: true
             },
-            // Animation
+
             animation: {
                 startup: true,
-                duration: 1000,
+                duration: 1200,
                 easing: 'inAndOut'
-            }
+            },
+
+            enableInteractivity: true,
+            focusTarget: 'category'
         };
 
-        // Create and draw the chart
         this.chart = new google.visualization.PieChart(this.chartContainer.nativeElement);
 
-        // Add event listeners for interactivity
+        // Add event listeners for hover effects
         google.visualization.events.addListener(this.chart, 'onmouseover', (e: any) => {
             this.onSliceHover(e);
         });
@@ -211,28 +216,17 @@ export class GooglePieChartComponent implements OnInit, OnChanges {
         this.chart.draw(chartData, options);
     }
 
-    private getSliceStyles(): any {
-        // Custom slice styling for enhanced 3D effect
-        const sliceStyles: any = {};
-        this.data.forEach((_, index) => {
-            sliceStyles[index] = {
-                offset: 0.02 // Slight separation for 3D effect
-            };
-        });
-        return sliceStyles;
-    }
-
     private onSliceHover(e: any): void {
-        // Optional: Add hover effects
         if (this.chart && e.row !== null) {
-            // Could implement custom hover logic here
+            const element = this.chartContainer.nativeElement;
+            element.style.cursor = 'pointer';
         }
     }
 
     private onSliceOut(e: any): void {
-        // Optional: Remove hover effects
         if (this.chart && e.row !== null) {
-            // Could implement custom hover removal logic here
+            const element = this.chartContainer.nativeElement;
+            element.style.cursor = 'default';
         }
     }
 
@@ -250,4 +244,4 @@ export class GooglePieChartComponent implements OnInit, OnChanges {
         }
         return '';
     }
-}
+} 

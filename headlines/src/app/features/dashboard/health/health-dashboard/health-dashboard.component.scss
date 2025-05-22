@@ -94,55 +94,72 @@
     }
 }
 
-/* Summary bar styling - restore horizontal layout */
+/* Summary bar styling - FIXED: ensure proper separation */
 .summary-bar {
     display: flex;
     gap: 16px;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
+    /* Increased margin */
     flex-wrap: wrap;
     position: relative;
-    z-index: 2;
-    background-color: transparent;
+    z-index: 10;
+    /* Higher z-index */
+    background-color: var(--background-color);
+    padding-bottom: 16px;
+    /* Add padding at bottom */
 
     app-metric-card {
         flex: 1;
         min-width: 200px;
         height: 110px;
         position: relative;
-        z-index: 3;
+        z-index: 11;
+        /* Even higher z-index for cards */
     }
 }
 
-/* Dashboard content - ensure proper spacing */
+/* Dashboard content - FIXED: ensure proper spacing and positioning */
 .dashboard-content {
     position: relative;
     z-index: 1;
-    margin-top: 24px;
+    margin-top: 32px;
+    /* Increased top margin */
     clear: both;
+    overflow: visible;
+    /* Ensure content is not clipped */
 }
 
-/* Use case groups - organize horizontally */
+/* Use case groups - organize horizontally with proper spacing */
 .use-case-groups {
     display: flex;
     flex-wrap: wrap;
     gap: 24px;
-    margin-top: 16px;
+    margin-top: 24px;
+    /* Add explicit top margin */
+    position: relative;
+    z-index: 1;
 }
 
 .use-case-group {
     flex: 1;
-    min-width: 300px;
+    min-width: 350px;
+    /* Increased minimum width */
     background-color: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
-    overflow: hidden;
+    overflow: visible;
+    /* Allow content to be visible */
     border-left: 4px solid var(--primary-color);
+    position: relative;
+    z-index: 2;
 }
 
 .group-header {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     padding: 16px 20px;
     border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    z-index: 3;
 
     .group-title {
         font-size: 18px;
@@ -172,9 +189,11 @@
     }
 }
 
-/* Charts within each group - arrange in rows */
+/* Charts within each group */
 .group-content {
     padding: 20px;
+    position: relative;
+    z-index: 2;
 }
 
 .charts-container {
@@ -191,11 +210,15 @@
 
 .pie-chart-card {
     flex: 1;
-    min-width: 250px;
+    min-width: 280px;
+    /* Increased minimum width for better chart display */
     background-color: #fafafa;
     border-radius: 6px;
     border: 1px solid #e0e0e0;
-    overflow: hidden;
+    overflow: visible;
+    /* Allow chart to be fully visible */
+    position: relative;
+    z-index: 1;
 }
 
 .chart-header {
@@ -203,6 +226,8 @@
     background-color: white;
     border-bottom: 1px solid #e0e0e0;
     text-align: center;
+    position: relative;
+    z-index: 2;
 
     h3 {
         font-size: 16px;
@@ -234,15 +259,21 @@
 }
 
 .chart-content {
-    padding: 12px;
-    height: 200px;
+    padding: 16px;
+    /* Increased padding */
+    height: 280px;
+    /* Increased height for better chart display */
     position: relative;
+    z-index: 1;
+    overflow: visible;
+    /* Ensure chart is fully visible */
 
-    app-donut-chart {
+    app-google-pie-chart {
         width: 100%;
         height: 100%;
         display: block;
         position: relative;
+        z-index: 1;
     }
 }
 
@@ -251,6 +282,8 @@
     padding: 16px 20px;
     background-color: #f8f9fa;
     border-top: 1px solid #e0e0e0;
+    position: relative;
+    z-index: 2;
 
     .legend-title {
         font-size: 14px;
@@ -301,7 +334,7 @@
     box-shadow: var(--shadow);
     position: relative;
     z-index: 1;
-    margin-top: 24px;
+    margin-top: 32px;
 
     mat-icon {
         font-size: 64px;
@@ -335,6 +368,8 @@
 
 @media (max-width: 1200px) {
     .summary-bar {
+        margin-bottom: 32px;
+
         app-metric-card {
             flex: 1 1 calc(33.333% - 16px);
             min-width: 180px;
@@ -348,10 +383,16 @@
     .pie-chart-card {
         min-width: auto;
     }
+
+    .dashboard-content {
+        margin-top: 24px;
+    }
 }
 
 @media (max-width: 768px) {
     .summary-bar {
+        margin-bottom: 24px;
+
         app-metric-card {
             flex: 1 1 calc(50% - 16px);
             min-width: 160px;
@@ -373,11 +414,21 @@
     .group-content {
         padding: 16px;
     }
+
+    .chart-content {
+        height: 240px;
+        padding: 12px;
+    }
+
+    .dashboard-content {
+        margin-top: 20px;
+    }
 }
 
 @media (max-width: 576px) {
     .summary-bar {
         flex-direction: column;
+        margin-bottom: 20px;
 
         app-metric-card {
             width: 100%;
@@ -388,6 +439,7 @@
 
     .use-case-groups {
         gap: 16px;
+        margin-top: 16px;
     }
 
     .group-content {
@@ -395,21 +447,26 @@
     }
 
     .chart-content {
-        height: 180px;
+        height: 220px;
+        padding: 8px;
+    }
+
+    .dashboard-content {
+        margin-top: 16px;
     }
 }
 
-/* Ensure charts don't overlap with summary cards */
+/* Global override to ensure proper z-index layering */
 :host ::ng-deep {
     app-metric-card {
         .metric-card {
             position: relative;
-            z-index: 5;
+            z-index: 15;
         }
     }
 
-    app-donut-chart {
-        .chart-container {
+    app-google-pie-chart {
+        .google-chart-container {
             position: relative;
             z-index: 1;
             overflow: visible;
