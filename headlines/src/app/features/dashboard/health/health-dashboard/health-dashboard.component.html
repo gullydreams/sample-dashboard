@@ -1,0 +1,75 @@
+<!-- src/app/features/dashboard/health/health-dashboard/health-dashboard.component.html -->
+<div class="dashboard-container">
+    <!-- Error Banner -->
+    <div class="error-banner" *ngIf="hasError">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage }}</span>
+        <button class="retry-button" (click)="loadHealthData(true)">Retry</button>
+    </div>
+
+    <!-- Health Filter Bar -->
+    <app-health-filter-bar [selectedDateRange]="selectedDateRange" [selectedTenantName]="selectedTenant?.name || ''"
+        [selectedUseCaseName]="selectedUseCase?.name || ''" [tenants]="availableTenants" [useCases]="availableUseCases"
+        [isRefreshing]="isRefreshing" (dateRangeChanged)="onDateRangeChanged($event)"
+        (tenantChanged)="onTenantChanged($event)" (useCaseChanged)="onUseCaseChanged($event)"
+        (refreshClicked)="onRefreshClicked()" (helpClicked)="onHelpClicked()">
+    </app-health-filter-bar>
+
+    <!-- Loading Indicator -->
+    <div class="loading-overlay" *ngIf="isLoading">
+        <div class="loading-spinner">
+            <mat-icon class="rotating">refresh</mat-icon>
+            <span>Loading health data...</span>
+        </div>
+    </div>
+
+    <!-- Summary metrics - ensure this section is properly contained -->
+    <div class="summary-bar" *ngIf="!isLoading">
+        <app-metric-card title="Health Score" [value]="summaryData.healthScore || 0" icon="favorite"
+            color="var(--primary-color)">
+        </app-metric-card>
+
+        <app-metric-card title="Pass Rate" [value]="summaryData.passRate || '0%'" [trend]="'up'" [trendValue]="'+2.3%'"
+            icon="check_circle" color="var(--success-color)">
+        </app-metric-card>
+
+        <app-metric-card title="Failure Rate" [value]="summaryData.failureRate || '0%'" [trend]="'down'"
+            [trendValue]="'-1.5%'" icon="error" color="var(--failure-color)">
+        </app-metric-card>
+
+        <app-metric-card title="Availability" [value]="summaryData.availability || '0%'" [trend]="'up'"
+            [trendValue]="'+0.8%'" icon="cloud_done" color="var(--primary-color)">
+        </app-metric-card>
+
+        <app-metric-card title="Active Tests" [value]="summaryData.inProgress || 0" icon="hourglass_empty"
+            color="#2196F3">
+        </app-metric-card>
+    </div>
+
+    <!-- Account Pie Charts Grid - ensure proper separation -->
+    <div class="dashboard-content" *ngIf="!isLoading">
+        <div class="charts-grid" *ngIf="accountCharts.length > 0">
+            <div class="pie-chart-card" *ngFor="let chart of accountCharts; trackBy: trackByChartTitle">
+                <div class="chart-header">
+                    <h3>{{ chart.title }}</h3>
+                    <div class="success-rate">
+                        <span class="rate-label">Success Rate:</span>
+                        <span class="rate-value">{{ chart.successRate }}%</span>
+                    </div>
+                </div>
+                <div class="chart-content">
+                    <app-donut-chart [data]="chart.data" [labels]="chart.labels" [colors]="chart.colors"
+                        [legendPosition]="'bottom'">
+                    </app-donut-chart>
+                </div>
+            </div>
+        </div>
+
+        <!-- No data message -->
+        <div class="no-data-message" *ngIf="accountCharts.length === 0">
+            <mat-icon>info</mat-icon>
+            <p>No account data available for the selected filters.</p>
+            <p class="no-data-hint">Select a tenant and use case to view health metrics.</p>
+        </div>
+    </div>
+</div>

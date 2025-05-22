@@ -1,0 +1,325 @@
+/* src/app/features/dashboard/health/health-dashboard/health-dashboard.component.scss */
+.dashboard-container {
+    padding: 16px;
+    background-color: var(--background-color);
+    position: relative;
+    min-height: 100vh;
+    /* Ensure full height */
+}
+
+/* Error banner */
+.error-banner {
+    display: flex;
+    align-items: center;
+    background-color: #FFEBEE;
+    border-left: 4px solid var(--failure-color);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    border-radius: 4px;
+    position: relative;
+    z-index: 5;
+
+    mat-icon {
+        color: var(--failure-color);
+        margin-right: 12px;
+    }
+
+    span {
+        flex: 1;
+        color: #B71C1C;
+    }
+
+    .retry-button {
+        background-color: var(--failure-color);
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 500;
+
+        &:hover {
+            background-color: #D32F2F;
+        }
+    }
+}
+
+/* Loading overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    mat-icon {
+        font-size: 36px;
+        height: 36px;
+        width: 36px;
+        margin-bottom: 16px;
+        color: var(--primary-color);
+    }
+
+    span {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .rotating {
+        animation: rotate 1.5s linear infinite;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Summary bar styling - ensure proper positioning */
+.summary-bar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    /* Increased margin to create more space */
+    position: relative;
+    z-index: 2;
+    /* Ensure it stays above other content */
+    background-color: transparent;
+
+    app-metric-card {
+        flex: 1;
+        min-width: 130px;
+        height: 110px;
+        position: relative;
+        z-index: 3;
+    }
+}
+
+/* Dashboard content organization - ensure proper spacing */
+.dashboard-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+    /* Add explicit top margin */
+    clear: both;
+    /* Clear any floating elements */
+}
+
+/* Charts grid for pie charts - ensure proper positioning */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+    margin-top: 16px;
+    /* Add space from summary bar */
+}
+
+/* Pie chart card styling - ensure proper containment */
+.pie-chart-card {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid #f0f0f0;
+    background-color: #fafafa;
+    position: relative;
+    z-index: 2;
+
+    h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        color: var(--text-color);
+    }
+
+    .success-rate {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .rate-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .rate-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--success-color);
+            background-color: rgba(76, 175, 80, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+    }
+}
+
+.chart-content {
+    padding: 16px;
+    height: 300px;
+    position: relative;
+    z-index: 1;
+
+    /* Ensure chart containers don't overflow */
+    app-donut-chart {
+        width: 100%;
+        height: 100%;
+        display: block;
+        position: relative;
+    }
+}
+
+/* No data message */
+.no-data-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: var(--text-secondary);
+    padding: 40px;
+    text-align: center;
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 1;
+    margin-top: 24px;
+
+    mat-icon {
+        font-size: 64px;
+        height: 64px;
+        width: 64px;
+        margin-bottom: 24px;
+        opacity: 0.5;
+    }
+
+    p {
+        margin: 0 0 8px 0;
+        font-size: 16px;
+    }
+
+    .no-data-hint {
+        font-size: 14px;
+        opacity: 0.7;
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 20px;
+    }
+
+    .summary-bar {
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+
+        app-metric-card {
+            flex: 1 1 calc(25% - 16px);
+            height: 110px;
+            min-width: 200px;
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .summary-bar {
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+
+        app-metric-card {
+            flex: 1 1 calc(50% - 16px);
+            height: 110px;
+            min-width: 180px;
+        }
+    }
+
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .dashboard-content {
+        margin-top: 16px;
+    }
+}
+
+@media (max-width: 576px) {
+    .summary-bar {
+        flex-direction: column;
+        margin-bottom: 16px;
+
+        app-metric-card {
+            width: 100%;
+            height: 100px;
+            min-width: auto;
+        }
+    }
+
+    .dashboard-container {
+        padding: 12px;
+    }
+
+    .charts-grid {
+        gap: 12px;
+    }
+}
+
+/* Ensure charts don't overlap with summary cards */
+:host ::ng-deep {
+    app-metric-card {
+        .metric-card {
+            position: relative;
+            z-index: 5;
+        }
+    }
+
+    app-donut-chart {
+        .chart-container {
+            position: relative;
+            z-index: 1;
+            overflow: visible;
+        }
+    }
+}

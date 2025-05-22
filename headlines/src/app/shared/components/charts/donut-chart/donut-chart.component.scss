@@ -1,7 +1,18 @@
 /* src/app/shared/components/charts/donut-chart/donut-chart.component.scss */
 .chart-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    min-height: 200px;
-  }
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+  overflow: hidden;
+  /* Prevent chart overflow */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ensure canvas doesn't exceed container bounds */
+canvas {
+  max-width: 100% !important;
+  max-height: 100% !important;
+}
