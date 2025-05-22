@@ -4,7 +4,6 @@
     background-color: var(--background-color);
     position: relative;
     min-height: 100vh;
-    /* Ensure full height */
 }
 
 /* Error banner */
@@ -95,110 +94,195 @@
     }
 }
 
-/* Summary bar styling - ensure proper positioning */
+/* Summary bar styling - restore horizontal layout */
 .summary-bar {
     display: flex;
     gap: 16px;
     margin-bottom: 32px;
-    /* Increased margin to create more space */
+    flex-wrap: wrap;
     position: relative;
     z-index: 2;
-    /* Ensure it stays above other content */
     background-color: transparent;
 
     app-metric-card {
         flex: 1;
-        min-width: 130px;
+        min-width: 200px;
         height: 110px;
         position: relative;
         z-index: 3;
     }
 }
 
-/* Dashboard content organization - ensure proper spacing */
+/* Dashboard content - ensure proper spacing */
 .dashboard-content {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
     position: relative;
     z-index: 1;
     margin-top: 24px;
-    /* Add explicit top margin */
     clear: both;
-    /* Clear any floating elements */
 }
 
-/* Charts grid for pie charts - ensure proper positioning */
-.charts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+/* Use case groups - organize horizontally */
+.use-case-groups {
+    display: flex;
+    flex-wrap: wrap;
     gap: 24px;
-    position: relative;
-    z-index: 1;
     margin-top: 16px;
-    /* Add space from summary bar */
 }
 
-/* Pie chart card styling - ensure proper containment */
-.pie-chart-card {
+.use-case-group {
+    flex: 1;
+    min-width: 300px;
     background-color: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     overflow: hidden;
-    position: relative;
-    z-index: 1;
+    border-left: 4px solid var(--primary-color);
+}
+
+.group-header {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 16px 20px;
+    border-bottom: 1px solid #e0e0e0;
+
+    .group-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+
+        &::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+    }
+
+    .group-subtitle {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin: 0;
+        font-weight: 500;
+        padding-left: 16px;
+    }
+}
+
+/* Charts within each group - arrange in rows */
+.group-content {
+    padding: 20px;
+}
+
+.charts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.charts-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.pie-chart-card {
+    flex: 1;
+    min-width: 250px;
+    background-color: #fafafa;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
 }
 
 .chart-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px;
-    border-bottom: 1px solid #f0f0f0;
-    background-color: #fafafa;
-    position: relative;
-    z-index: 2;
+    padding: 12px 16px;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
 
     h3 {
         font-size: 16px;
-        font-weight: 500;
-        margin: 0;
+        font-weight: 600;
+        margin: 0 0 4px 0;
         color: var(--text-color);
     }
 
     .success-rate {
         display: flex;
+        justify-content: center;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
 
         .rate-label {
-            font-size: 12px;
+            font-size: 11px;
             color: var(--text-secondary);
         }
 
         .rate-value {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--success-color);
             background-color: rgba(76, 175, 80, 0.1);
-            padding: 2px 8px;
-            border-radius: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
         }
     }
 }
 
 .chart-content {
-    padding: 16px;
-    height: 300px;
+    padding: 12px;
+    height: 200px;
     position: relative;
-    z-index: 1;
 
-    /* Ensure chart containers don't overflow */
     app-donut-chart {
         width: 100%;
         height: 100%;
         display: block;
         position: relative;
+    }
+}
+
+/* Shared legend for each group */
+.shared-legend {
+    padding: 16px 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+
+    .legend-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 12px 0;
+        color: var(--text-color);
+        text-align: center;
+    }
+
+    .legend-items {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .legend-label {
+            font-size: 12px;
+            color: var(--text-color);
+            font-weight: 500;
+        }
     }
 }
 
@@ -239,70 +323,79 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 1200px) {
-    .charts-grid {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
+@media (max-width: 1400px) {
+    .use-case-groups {
+        flex-direction: column;
     }
 
-    .summary-bar {
-        flex-wrap: wrap;
-        margin-bottom: 24px;
-
-        app-metric-card {
-            flex: 1 1 calc(25% - 16px);
-            height: 110px;
-            min-width: 200px;
-        }
+    .use-case-group {
+        min-width: auto;
     }
 }
 
-@media (max-width: 768px) {
-    .charts-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-
+@media (max-width: 1200px) {
     .summary-bar {
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-
         app-metric-card {
-            flex: 1 1 calc(50% - 16px);
-            height: 110px;
+            flex: 1 1 calc(33.333% - 16px);
             min-width: 180px;
         }
     }
 
-    .chart-header {
+    .charts-row {
         flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
     }
 
-    .dashboard-content {
-        margin-top: 16px;
+    .pie-chart-card {
+        min-width: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-bar {
+        app-metric-card {
+            flex: 1 1 calc(50% - 16px);
+            min-width: 160px;
+        }
+    }
+
+    .group-header {
+        padding: 12px 16px;
+
+        .group-title {
+            font-size: 16px;
+        }
+
+        .group-subtitle {
+            font-size: 12px;
+        }
+    }
+
+    .group-content {
+        padding: 16px;
     }
 }
 
 @media (max-width: 576px) {
     .summary-bar {
         flex-direction: column;
-        margin-bottom: 16px;
 
         app-metric-card {
             width: 100%;
-            height: 100px;
             min-width: auto;
+            height: 100px;
         }
     }
 
-    .dashboard-container {
+    .use-case-groups {
+        gap: 16px;
+    }
+
+    .group-content {
         padding: 12px;
     }
 
-    .charts-grid {
-        gap: 12px;
+    .chart-content {
+        height: 180px;
     }
 }
 

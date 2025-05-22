@@ -23,7 +23,7 @@
         </div>
     </div>
 
-    <!-- Summary metrics - ensure this section is properly contained -->
+    <!-- Summary metrics -->
     <div class="summary-bar" *ngIf="!isLoading">
         <app-metric-card title="Health Score" [value]="summaryData.healthScore || 0" icon="favorite"
             color="var(--primary-color)">
@@ -46,27 +46,36 @@
         </app-metric-card>
     </div>
 
-    <!-- Account Pie Charts Grid - ensure proper separation -->
+    <!-- Account Pie Charts Grouped by Use Case -->
     <div class="dashboard-content" *ngIf="!isLoading">
-        <div class="charts-grid" *ngIf="accountCharts.length > 0">
-            <div class="pie-chart-card" *ngFor="let chart of accountCharts; trackBy: trackByChartTitle">
-                <div class="chart-header">
-                    <h3>{{ chart.title }}</h3>
-                    <div class="success-rate">
-                        <span class="rate-label">Success Rate:</span>
-                        <span class="rate-value">{{ chart.successRate }}%</span>
-                    </div>
+        <div class="use-case-groups" *ngIf="accountChartGroups.length > 0">
+            <div class="use-case-group" *ngFor="let group of accountChartGroups; trackBy: trackByGroupTitle">
+                <div class="group-header">
+                    <h2 class="group-title">{{ group.useCaseTitle }}</h2>
+                    <div class="group-subtitle">{{ selectedTenant?.name }} - {{ group.useCaseTitle }} Accounts</div>
                 </div>
-                <div class="chart-content">
-                    <app-donut-chart [data]="chart.data" [labels]="chart.labels" [colors]="chart.colors"
-                        [legendPosition]="'bottom'">
-                    </app-donut-chart>
+
+                <div class="charts-grid">
+                    <div class="pie-chart-card" *ngFor="let chart of group.charts; trackBy: trackByChartTitle">
+                        <div class="chart-header">
+                            <h3>{{ chart.title }}</h3>
+                            <div class="success-rate">
+                                <span class="rate-label">Success Rate:</span>
+                                <span class="rate-value">{{ chart.successRate }}%</span>
+                            </div>
+                        </div>
+                        <div class="chart-content">
+                            <app-donut-chart [data]="chart.data" [labels]="chart.labels" [colors]="chart.colors"
+                                [legendPosition]="'bottom'">
+                            </app-donut-chart>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- No data message -->
-        <div class="no-data-message" *ngIf="accountCharts.length === 0">
+        <div class="no-data-message" *ngIf="accountChartGroups.length === 0">
             <mat-icon>info</mat-icon>
             <p>No account data available for the selected filters.</p>
             <p class="no-data-hint">Select a tenant and use case to view health metrics.</p>
